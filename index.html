@@ -1,0 +1,5471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary Meta ─────────────────────────────────────────────────────── -->
+    <title>Gemini Prompt Lab — Test, Compare & Export Gemini AI Prompts</title>
+    <meta
+      name="description"
+      content="A free, open-source browser tool to write, test, version and compare Gemini AI prompts. Supports variables, structured JSON output, multi-language code export, and side-by-side model comparison. No server required."
+    />
+    <meta
+      name="keywords"
+      content="Gemini prompt testing, Google Gemini API, prompt engineering tool, AI prompt playground, Gemini prompt variables, compare AI models, prompt versioning, LLM testing tool, Gemini 2.5 flash"
+    />
+    <meta name="author" content="Gemini Prompt Lab" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0d0f12" />
+
+    <!-- ── Canonical ─────────────────────────────────────────────────────────── -->
+    <link rel="canonical" href="https://prompt-lab.vercel.app/" />
+
+    <!-- ── Favicon (inline SVG — no external file needed) ───────────────────── -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d0f12'/><text y='.9em' font-size='72' x='50%' dominant-baseline='top' text-anchor='middle' dy='8'>⚗</text></svg>"
+    />
+    <link
+      rel="alternate icon"
+      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAKklEQVRYhe3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAeAMBxAABHgAAAABJRU5ErkJggg=="
+    />
+    <meta name="msapplication-TileColor" content="#0d0f12" />
+
+    <!-- ── Open Graph (Facebook, LinkedIn, WhatsApp, Slack) ─────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://prompt-lab.vercel.app/" />
+    <meta
+      property="og:title"
+      content="Gemini Prompt Lab — Test, Compare & Export AI Prompts"
+    />
+    <meta
+      property="og:description"
+      content="Write prompts with variables, run them against Gemini models, compare outputs side by side, version your work, and export to JavaScript, Python, TypeScript, Go, Swift, Kotlin or Dart. Free, runs entirely in your browser."
+    />
+    <meta
+      property="og:image"
+      content="https://prompt-lab.vercel.app/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Gemini Prompt Lab — prompt editor with compare mode showing two model outputs side by side"
+    />
+    <meta property="og:site_name" content="Gemini Prompt Lab" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ── Twitter Card ──────────────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://prompt-lab.vercel.app/" />
+    <meta
+      name="twitter:title"
+      content="Gemini Prompt Lab — Test, Compare & Export AI Prompts"
+    />
+    <meta
+      name="twitter:description"
+      content="Write prompts with variables, compare Gemini models side by side, version your work, and export runnable code in 7 languages. Free browser tool, no server needed."
+    />
+    <meta
+      name="twitter:image"
+      content="https://prompt-lab.vercel.app/og-image.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Gemini Prompt Lab interface showing compare mode"
+    />
+
+    <!-- ── Structured Data (JSON-LD) ─────────────────────────────────────────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Gemini Prompt Lab",
+        "url": "https://prompt-lab.vercel.app/",
+        "description": "A free browser-based tool for testing, versioning and comparing Google Gemini AI prompts. Supports prompt variables, structured JSON output, side-by-side model comparison, and code export in JavaScript, TypeScript, Python, Dart, Kotlin, Swift and Go.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Prompt variables with live highlighting",
+          "Side-by-side model comparison",
+          "Version history with pass/fail flags",
+          "Structured JSON output with schema generation",
+          "Code export in 7 programming languages",
+          "Grounding / search source chips",
+          "Works entirely in the browser — no server required"
+        ],
+        "keywords": "Gemini, prompt engineering, AI testing, LLM playground, Google Gemini API"
+      }
+    </script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap");
+
+      :root {
+        --bg-base: #0d0f12;
+        --bg-panel: #13161b;
+        --bg-elevated: #1a1e25;
+        --bg-input: #1e222b;
+        --bg-hover: #232830;
+        --border: #2a2f3a;
+        --border-focus: #3d8ef0;
+
+        --text-primary: #e8ecf2;
+        --text-secondary: #8a93a6;
+        --text-muted: #4e5666;
+
+        --accent-blue: #3d8ef0;
+        --accent-green: #3ecf8e;
+        --accent-red: #f05252;
+        --accent-amber: #f5a623;
+        --accent-purple: #9b7fe8;
+
+        --var-highlight-bg: transparent;
+        --var-highlight-color: #f5a623;
+
+        --font-mono: "IBM Plex Mono", monospace;
+        --font-sans: "IBM Plex Sans", sans-serif;
+
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+
+        --sidebar-width: 220px;
+        --output-width: 380px;
+        --header-height: 48px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg-base);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 13px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ─── SCROLLBARS ──────────────────────────────────── */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      /* ─── LAYOUT ──────────────────────────────────────── */
+      #app {
+        display: grid;
+        grid-template-rows: var(--header-height) 1fr;
+        grid-template-columns: var(--sidebar-width) 1fr var(--output-width);
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* ─── HEADER ──────────────────────────────────────── */
+      #header {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-panel);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+      .logo-icon {
+        width: 22px;
+        height: 22px;
+        background: var(--accent-blue);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+      }
+
+      .header-divider {
+        width: 1px;
+        height: 20px;
+        background: var(--border);
+        flex-shrink: 0;
+      }
+
+      .header-field {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        max-width: 320px;
+      }
+      .header-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        white-space: nowrap;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .header-input {
+        flex: 1;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 4px 8px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .header-input:focus {
+        border-color: var(--border-focus);
+      }
+
+      #model-select {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 4px 8px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.15s;
+      }
+      #model-select:focus {
+        border-color: var(--border-focus);
+      }
+
+      #api-key-status {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        flex-shrink: 0;
+        transition: background 0.3s;
+      }
+      #api-key-status.set {
+        background: var(--accent-green);
+      }
+
+      /* ─── SIDEBAR ─────────────────────────────────────── */
+      #sidebar {
+        border-right: 1px solid var(--border);
+        background: var(--bg-panel);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar-header {
+        padding: 12px 12px 8px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .sidebar-title {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .version-count {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        background: var(--bg-elevated);
+        padding: 1px 6px;
+        border-radius: 10px;
+      }
+
+      #versions-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 6px;
+      }
+
+      .version-item {
+        border-radius: var(--radius-sm);
+        padding: 8px 10px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        margin-bottom: 3px;
+        transition:
+          background 0.1s,
+          border-color 0.1s;
+        position: relative;
+      }
+      .version-item:hover {
+        background: var(--bg-hover);
+      }
+      .version-item.active {
+        background: rgba(61, 142, 240, 0.08);
+        border-color: rgba(61, 142, 240, 0.25);
+      }
+
+      .version-item-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 3px;
+      }
+      .version-flag {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .version-flag.pass {
+        background: var(--accent-green);
+      }
+      .version-flag.fail {
+        background: var(--accent-red);
+      }
+      .version-flag.none {
+        background: var(--text-muted);
+      }
+
+      .version-name {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+      .version-time {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+      }
+      .version-annotation {
+        font-size: 11px;
+        color: var(--text-secondary);
+        line-height: 1.4;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .version-delete-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        opacity: 0;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        padding: 2px 4px;
+        border-radius: var(--radius-sm);
+        transition:
+          opacity 0.1s,
+          color 0.1s;
+      }
+      .version-item:hover .version-delete-btn {
+        opacity: 1;
+      }
+      .version-delete-btn:hover {
+        color: var(--accent-red);
+      }
+
+      .sidebar-empty {
+        padding: 24px 12px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      /* ─── MIDDLE PANEL ────────────────────────────────── */
+      #editor-panel {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--bg-base);
+      }
+
+      .panel-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-panel);
+        flex-shrink: 0;
+      }
+      .panel-toolbar-title {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        font-weight: 500;
+        flex: 1;
+      }
+
+      /* Tabs */
+      .tab-bar {
+        display: flex;
+        gap: 2px;
+        padding: 8px 12px 0;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-panel);
+        flex-shrink: 0;
+      }
+      .tab {
+        padding: 6px 14px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        border: 1px solid transparent;
+        border-bottom: none;
+        transition:
+          color 0.15s,
+          background 0.15s;
+        position: relative;
+        bottom: -1px;
+      }
+      .tab:hover {
+        color: var(--text-secondary);
+      }
+      .tab.active {
+        color: var(--text-primary);
+        background: var(--bg-base);
+        border-color: var(--border);
+        border-bottom-color: var(--bg-base);
+      }
+
+      /* Editor area */
+      #prompt-tab-content,
+      #vars-tab-content {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      #prompt-tab-content.hidden,
+      #vars-tab-content.hidden {
+        display: none;
+      }
+
+      /* Prompt editor with syntax overlay */
+      #editor-wrapper {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #prompt-highlight {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px 16px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-y: auto;
+        pointer-events: none;
+        color: transparent;
+      }
+      .var-token {
+        color: var(--accent-amber);
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: rgba(245, 166, 35, 0.5);
+      }
+
+      #prompt-editor {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px 16px;
+        background: transparent;
+        border: none;
+        outline: none;
+        resize: none;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text-primary);
+        caret-color: var(--accent-blue);
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      /* Autocomplete dropdown */
+      #autocomplete {
+        position: fixed;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        min-width: 200px;
+        max-width: 300px;
+        overflow: hidden;
+        display: none;
+      }
+      .autocomplete-header {
+        padding: 6px 10px;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+      }
+      .autocomplete-item {
+        padding: 7px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.1s;
+      }
+      .autocomplete-item:hover,
+      .autocomplete-item.selected {
+        background: var(--bg-hover);
+      }
+      .autocomplete-item-name {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--var-highlight-color);
+        font-weight: 500;
+      }
+      .autocomplete-item-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Run toolbar */
+      #run-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-panel);
+        flex-shrink: 0;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 500;
+        transition:
+          opacity 0.15s,
+          filter 0.15s,
+          background 0.15s;
+        white-space: nowrap;
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn:not(:disabled):hover {
+        filter: brightness(1.1);
+      }
+
+      .btn-primary {
+        background: var(--accent-blue);
+        color: #fff;
+      }
+      .btn-danger {
+        background: var(--accent-red);
+        color: #fff;
+      }
+      .btn-ghost {
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: var(--bg-hover);
+        color: var(--text-primary);
+      }
+      .btn-sm {
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+
+      #elapsed-display {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-left: 4px;
+      }
+      #elapsed-display.running {
+        color: var(--accent-blue);
+      }
+      #token-display {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-left: auto;
+      }
+
+      /* Variables tab */
+      #vars-tab-content {
+        padding: 16px;
+        overflow-y: auto;
+        gap: 12px;
+      }
+
+      .vars-add-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .var-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 8px;
+        align-items: start;
+        padding: 10px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: 8px;
+        animation: slideIn 0.15s ease;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .var-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .var-field-label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+      .var-input {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 5px 8px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.15s;
+      }
+      .var-input:focus {
+        border-color: var(--border-focus);
+      }
+      .var-input.name-input {
+        color: var(--var-highlight-color);
+      }
+
+      .var-delete-btn {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        margin-top: 18px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+        flex-shrink: 0;
+      }
+      .var-delete-btn:hover {
+        color: var(--accent-red);
+        border-color: var(--accent-red);
+      }
+
+      .vars-empty {
+        text-align: center;
+        padding: 32px 16px;
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+      .vars-empty code {
+        font-family: var(--font-mono);
+        color: var(--var-highlight-color);
+        background: var(--var-highlight-bg);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      /* ─── COMPARE MODE ───────────────────────────────────── */
+      #app.compare {
+        grid-template-columns: var(--sidebar-width) 1fr 1fr;
+      }
+      #compare-toggle-btn.active {
+        background: rgba(61, 142, 240, 0.15);
+        color: var(--accent-blue);
+        border-color: rgba(61, 142, 240, 0.3);
+      }
+      #compare-bar {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-elevated);
+        flex-shrink: 0;
+        flex-wrap: wrap;
+      }
+      #compare-bar.visible {
+        display: flex;
+      }
+      .compare-model-slot {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        min-width: 0;
+      }
+      .compare-slot-label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .compare-slot-label.a {
+        color: var(--accent-blue);
+      }
+      .compare-slot-label.b {
+        color: var(--accent-purple);
+      }
+      .compare-model-select {
+        flex: 1;
+        min-width: 0;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        padding: 3px 6px;
+        outline: none;
+        cursor: pointer;
+      }
+      .compare-model-select:focus {
+        border-color: var(--border-focus);
+      }
+      #run-both-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      #compare-panes {
+        display: none;
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
+      }
+      #compare-panes.visible {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .compare-pane {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+        border-right: 1px solid var(--border);
+      }
+      .compare-pane:last-child {
+        border-right: none;
+      }
+      .compare-pane-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        background: var(--bg-panel);
+      }
+      .compare-pane-label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+        margin-right: 2px;
+      }
+      .compare-pane-label.a {
+        color: var(--accent-blue);
+      }
+      .compare-pane-label.b {
+        color: var(--accent-purple);
+      }
+      .compare-status {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        padding: 2px 7px;
+        border-radius: 10px;
+        flex-shrink: 0;
+      }
+      .compare-status.idle {
+        background: rgba(78, 86, 102, 0.2);
+        color: var(--text-muted);
+      }
+      .compare-status.running {
+        background: rgba(61, 142, 240, 0.15);
+        color: var(--accent-blue);
+        animation: pulse 1.5s infinite;
+      }
+      .compare-status.done {
+        background: rgba(62, 207, 142, 0.12);
+        color: var(--accent-green);
+      }
+      .compare-status.error {
+        background: rgba(240, 82, 82, 0.12);
+        color: var(--accent-red);
+      }
+      .compare-status.aborted {
+        background: rgba(245, 166, 35, 0.12);
+        color: var(--accent-amber);
+      }
+      .compare-pane-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px 14px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+        min-height: 0;
+      }
+      .compare-placeholder {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 11px;
+        text-align: center;
+      }
+      .compare-output-text {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text-primary);
+        display: none;
+      }
+      .compare-output-error {
+        color: var(--accent-red);
+        white-space: pre-wrap;
+        font-size: 12px;
+        display: none;
+      }
+      .compare-pane-footer {
+        border-top: 1px solid var(--border);
+        padding: 6px 10px;
+        display: none;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-panel);
+        flex-shrink: 0;
+      }
+      .compare-pane-footer.visible {
+        display: flex;
+      }
+      .compare-elapsed {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        margin-right: auto;
+      }
+      #output-panel.compare-hidden {
+        display: none;
+      }
+
+      /* ─── OUTPUT PANEL ────────────────────────────────── */
+      #output-panel {
+        border-left: 1px solid var(--border);
+        background: var(--bg-panel);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .output-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .output-toolbar-title {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        font-weight: 500;
+        flex: 1;
+      }
+
+      #output-status {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        padding: 2px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      #output-status.idle {
+        background: rgba(78, 86, 102, 0.2);
+        color: var(--text-muted);
+      }
+      #output-status.running {
+        display: inline-block;
+        background: rgba(61, 142, 240, 0.15);
+        color: var(--accent-blue);
+        animation: pulse 1.5s infinite;
+      }
+      #output-status.done {
+        display: inline-block;
+        background: rgba(62, 207, 142, 0.12);
+        color: var(--accent-green);
+      }
+      #output-status.error {
+        display: inline-block;
+        background: rgba(240, 82, 82, 0.12);
+        color: var(--accent-red);
+      }
+      #output-status.aborted {
+        display: inline-block;
+        background: rgba(245, 166, 35, 0.12);
+        color: var(--accent-amber);
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      #output-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px 16px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      #output-placeholder {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 12px;
+        text-align: center;
+        padding: 24px;
+      }
+      .placeholder-icon {
+        font-size: 28px;
+        opacity: 0.3;
+        margin-bottom: 4px;
+      }
+
+      #output-text {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text-primary);
+        display: none;
+      }
+
+      /* JSON highlighting */
+      .json-key {
+        color: #7db8f7;
+      }
+      .json-str {
+        color: var(--accent-green);
+      }
+      .json-num {
+        color: var(--accent-amber);
+      }
+      .json-bool {
+        color: var(--accent-purple);
+      }
+      .json-null {
+        color: var(--text-muted);
+      }
+
+      #output-error {
+        color: var(--accent-red);
+        white-space: pre-wrap;
+        font-size: 12px;
+        display: none;
+      }
+
+      /* Save panel */
+      #save-panel {
+        border-top: 1px solid var(--border);
+        padding: 12px;
+        background: var(--bg-elevated);
+        flex-shrink: 0;
+        display: none;
+        animation: slideUp 0.2s ease;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #save-panel.visible {
+        display: block;
+      }
+
+      .save-panel-title {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+      .save-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .save-name-input {
+        flex: 1;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 5px 8px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .save-name-input:focus {
+        border-color: var(--border-focus);
+      }
+
+      .flag-toggle {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .flag-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .flag-btn.pass.active {
+        background: rgba(62, 207, 142, 0.2);
+        color: var(--accent-green);
+      }
+      .flag-btn.fail.active {
+        background: rgba(240, 82, 82, 0.15);
+        color: var(--accent-red);
+      }
+
+      .save-annotation {
+        width: 100%;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 12px;
+        padding: 7px 10px;
+        outline: none;
+        resize: none;
+        height: 56px;
+        line-height: 1.5;
+        transition: border-color 0.15s;
+        margin-bottom: 8px;
+        display: block;
+        width: 100%;
+      }
+      .save-annotation:focus {
+        border-color: var(--border-focus);
+      }
+      .save-annotation::placeholder {
+        color: var(--text-muted);
+      }
+
+      .save-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* Grounding chips */
+      #grounding-section {
+        border-top: 1px solid var(--border);
+        padding: 10px 12px;
+        flex-shrink: 0;
+        display: none;
+      }
+      #grounding-section.visible {
+        display: block;
+      }
+      .grounding-label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+      .grounding-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 8px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 11px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .chip:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+      }
+      .chip-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent-blue);
+        flex-shrink: 0;
+      }
+
+      /* Cancel warning */
+      #cancel-warning {
+        display: none;
+        font-size: 11px;
+        color: var(--accent-amber);
+        font-family: var(--font-mono);
+        padding: 6px 12px;
+        background: rgba(245, 166, 35, 0.08);
+        border-top: 1px solid rgba(245, 166, 35, 0.2);
+        flex-shrink: 0;
+      }
+      #cancel-warning.visible {
+        display: block;
+      }
+
+      /* System prompt */
+      #system-prompt-section {
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        background: var(--bg-panel);
+      }
+      #system-prompt-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        transition: color 0.15s;
+      }
+      #system-prompt-toggle:hover {
+        color: var(--text-secondary);
+      }
+      #system-prompt-toggle .toggle-arrow {
+        font-size: 9px;
+        transition: transform 0.2s;
+        display: inline-block;
+      }
+      #system-prompt-toggle.open .toggle-arrow {
+        transform: rotate(90deg);
+      }
+      #system-prompt-toggle .sys-label {
+        flex: 1;
+      }
+      #system-prompt-toggle .sys-set-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-purple);
+        display: none;
+      }
+      #system-prompt-toggle .sys-set-dot.visible {
+        display: block;
+      }
+
+      #system-prompt-body {
+        display: none;
+        padding: 0 12px 10px;
+      }
+      #system-prompt-body.open {
+        display: block;
+      }
+      #system-prompt-editor {
+        width: 100%;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.6;
+        padding: 8px 10px;
+        outline: none;
+        resize: none;
+        height: 80px;
+        transition:
+          border-color 0.15s,
+          height 0.15s;
+      }
+      #system-prompt-editor:focus {
+        border-color: var(--accent-purple);
+        color: var(--text-primary);
+        height: 120px;
+      }
+      #system-prompt-editor::placeholder {
+        color: var(--text-muted);
+      }
+
+      /* Live token counter */
+      #live-token-count {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      #live-token-count .tok-num {
+        color: var(--text-secondary);
+      }
+      #live-token-count.warn .tok-num {
+        color: var(--accent-amber);
+      }
+      #live-token-count.danger .tok-num {
+        color: var(--accent-red);
+      }
+
+      /* Code modal */
+      #code-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(2px);
+      }
+      #code-modal-overlay.open {
+        display: flex;
+      }
+      #code-modal {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        width: 680px;
+        max-width: 95vw;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+        animation: modalIn 0.18s ease;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.97) translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .modal-title {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .modal-subtitle {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+      }
+      #code-output {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+        color: var(--text-primary);
+        white-space: pre;
+        overflow-x: auto;
+        tab-size: 2;
+      }
+      .code-kw {
+        color: var(--accent-purple);
+      }
+      .code-str {
+        color: var(--accent-green);
+      }
+      .code-key {
+        color: #7db8f7;
+      }
+      .code-cmt {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+      #code-modal-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-panel);
+        min-height: 40px;
+        flex-wrap: wrap;
+      }
+      .code-ctrl-label {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .code-ctrl-cb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        background: var(--bg-input);
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .code-ctrl-cb:checked {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+      }
+      .code-ctrl-cb:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 9px;
+        color: #fff;
+        font-weight: 700;
+      }
+      #lang-select-wrapper {
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      #lang-select-wrapper.visible {
+        display: flex;
+      }
+      .code-ctrl-divider {
+        width: 1px;
+        height: 16px;
+        background: var(--border);
+        margin: 0 4px;
+      }
+      #lang-select {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        padding: 3px 8px;
+        outline: none;
+        cursor: pointer;
+      }
+      #lang-select:focus {
+        border-color: var(--border-focus);
+      }
+      .modal-footer {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      /* kbd shortcut hint */
+      kbd {
+        display: inline-flex;
+        align-items: center;
+        padding: 1px 5px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
+      /* ─── DOCS MODAL ─────────────────────────────────────── */
+      #docs-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 4000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        backdrop-filter: blur(2px);
+      }
+      #docs-overlay.open {
+        display: flex;
+      }
+      #docs-modal {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        width: 720px;
+        max-width: 100%;
+        max-height: calc(100vh - 64px);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+        animation: modalIn 0.18s ease;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .docs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid var(--border);
+        gap: 12px;
+        flex-shrink: 0;
+        background: var(--bg-panel);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      }
+      .docs-header-title {
+        font-family: var(--font-mono);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .docs-header-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+      }
+      .docs-body {
+        padding: 24px 28px;
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .docs-section-title {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-blue);
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .docs-section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .docs-item {
+        display: flex;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .docs-item:last-child {
+        border-bottom: none;
+      }
+      .docs-item-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: var(--bg-elevated);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .docs-item-body {
+        flex: 1;
+      }
+      .docs-item-title {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .docs-item-desc {
+        font-size: 12px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .docs-item-desc code {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent-amber);
+        background: rgba(245, 166, 35, 0.1);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .docs-badge {
+        font-size: 9px;
+        font-family: var(--font-mono);
+        padding: 1px 6px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+      }
+      .docs-badge.tip {
+        background: rgba(61, 142, 240, 0.15);
+        color: var(--accent-blue);
+      }
+      .docs-badge.new {
+        background: rgba(62, 207, 142, 0.15);
+        color: var(--accent-green);
+      }
+      .docs-badge.pro {
+        background: rgba(155, 127, 232, 0.15);
+        color: var(--accent-purple);
+      }
+      .docs-kbd {
+        display: inline-flex;
+        align-items: center;
+        padding: 1px 6px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+      .docs-footer {
+        padding: 14px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .docs-version {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
+      #json-schema-section {
+        border-top: 1px solid var(--border);
+        background: var(--bg-panel);
+        flex-shrink: 0;
+      }
+      #json-schema-toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+      }
+      .json-toggle-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        background: var(--bg-input);
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .json-toggle-checkbox:checked {
+        background: var(--accent-green);
+        border-color: var(--accent-green);
+      }
+      .json-toggle-checkbox:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 10px;
+        color: #fff;
+        font-weight: 700;
+      }
+      .json-toggle-label {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-secondary);
+        cursor: pointer;
+        user-select: none;
+        flex: 1;
+      }
+      .json-toggle-label.active {
+        color: var(--accent-green);
+      }
+      #json-schema-body {
+        display: none;
+        padding: 0 12px 12px;
+        flex-direction: column;
+        gap: 8px;
+      }
+      #json-schema-body.open {
+        display: flex;
+      }
+      .schema-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .schema-status {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        flex: 1;
+      }
+      .schema-status.generating {
+        color: var(--accent-blue);
+        animation: pulse 1.5s infinite;
+      }
+      .schema-status.ready {
+        color: var(--accent-green);
+      }
+      .schema-status.stale {
+        color: var(--accent-amber);
+      }
+      .schema-status.invalid {
+        color: var(--accent-red);
+      }
+      #schema-editor {
+        width: 100%;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        line-height: 1.6;
+        padding: 8px 10px;
+        outline: none;
+        resize: none;
+        height: 72px;
+        transition:
+          height 0.22s ease,
+          border-color 0.15s;
+      }
+      #schema-editor:focus {
+        border-color: var(--border-focus);
+        height: 200px;
+      }
+      #schema-editor.invalid {
+        border-color: var(--accent-red) !important;
+      }
+      #schema-editor::placeholder {
+        color: var(--text-muted);
+      }
+      /* Prompt editor shrinks when schema is focused */
+      #editor-wrapper {
+        transition: flex 0.22s ease;
+      }
+      #editor-wrapper.schema-focused {
+        flex: 0 0 100px !important;
+        min-height: 100px;
+      }
+      .schema-stale-banner {
+        background: rgba(245, 166, 35, 0.08);
+        border: 1px solid rgba(245, 166, 35, 0.25);
+        border-radius: var(--radius-sm);
+        padding: 6px 10px;
+        font-size: 11px;
+        color: var(--accent-amber);
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      .schema-stale-banner.visible {
+        display: flex;
+      }
+      /* JSON explain modal */
+      #json-explain-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(2px);
+      }
+      #json-explain-overlay.open {
+        display: flex;
+      }
+      #json-explain-modal {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        width: 480px;
+        max-width: 95vw;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+        animation: modalIn 0.18s ease;
+        overflow: hidden;
+      }
+      .explain-header {
+        padding: 16px 16px 0;
+      }
+      .explain-title {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+      .explain-body {
+        padding: 12px 16px 16px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .explain-body code {
+        font-family: var(--font-mono);
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 1px 5px;
+        color: var(--accent-green);
+        font-size: 11px;
+      }
+      .explain-body pre {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent-green);
+        margin: 8px 0;
+        overflow-x: auto;
+        line-height: 1.6;
+      }
+      .explain-footer {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .explain-dont-show {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        font-size: 11px;
+        color: var(--text-muted);
+        cursor: pointer;
+        user-select: none;
+      }
+      .explain-dont-show input {
+        cursor: pointer;
+      }
+
+      /* Copy prompt button */
+      #copy-prompt-btn {
+        margin-left: auto;
+        font-size: 10px;
+        padding: 3px 9px;
+        opacity: 0.7;
+        transition: opacity 0.15s;
+        position: relative;
+        bottom: -1px;
+      }
+      #copy-prompt-btn:hover {
+        opacity: 1;
+      }
+
+      /* JSON Tree */
+      .json-tree {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.7;
+        color: var(--text-primary);
+      }
+      .jt-node {
+        position: relative;
+      }
+      .jt-toggle {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        gap: 4px;
+      }
+      .jt-toggle:hover .jt-arrow {
+        color: var(--text-primary);
+      }
+      .jt-arrow {
+        display: inline-block;
+        width: 12px;
+        font-size: 9px;
+        color: var(--text-muted);
+        transition: transform 0.15s;
+        flex-shrink: 0;
+      }
+      .jt-arrow.open {
+        transform: rotate(90deg);
+      }
+      .jt-key {
+        color: #7db8f7;
+      }
+      .jt-str {
+        color: var(--accent-green);
+      }
+      .jt-num {
+        color: var(--accent-amber);
+      }
+      .jt-bool {
+        color: var(--accent-purple);
+      }
+      .jt-null {
+        color: var(--text-muted);
+      }
+      .jt-summary {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+      .jt-children {
+        padding-left: 18px;
+        border-left: 1px solid var(--border);
+        margin-left: 5px;
+      }
+      .jt-children.hidden {
+        display: none;
+      }
+      .jt-bracket {
+        color: var(--text-muted);
+      }
+      .jt-comma {
+        color: var(--text-muted);
+      }
+
+      @keyframes dots {
+        0%,
+        100% {
+          content: "";
+        }
+        25% {
+          content: ".";
+        }
+        50% {
+          content: "..";
+        }
+        75% {
+          content: "...";
+        }
+      }
+
+      /* Toast */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 8px 16px;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        color: var(--text-primary);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ─── HEADER ───────────────────────────────────────── -->
+      <header id="header">
+        <div class="logo">
+          <div class="logo-icon">⚗</div>
+          Prompt Lab
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-field">
+          <span class="header-label">API Key</span>
+          <div id="api-key-status"></div>
+          <input
+            type="password"
+            id="api-key-input"
+            class="header-input"
+            placeholder="AIza..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <div class="header-divider"></div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span class="header-label">Model</span>
+          <select id="model-select">
+            <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+            <option value="gemini-2.5-flash-lite" selected>
+              gemini-2.5-flash-lite
+            </option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+            <option value="gemini-3-flash-preview">gemini-3.0-flash</option>
+          </select>
+        </div>
+        <div
+          style="
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <button
+            class="btn btn-ghost btn-sm"
+            id="compare-toggle-btn"
+            onclick="toggleCompare()"
+            title="Compare two models side by side"
+          >
+            ⊞ Compare
+          </button>
+          <button
+            class="btn btn-ghost btn-sm"
+            onclick="openDocs()"
+            title="How to use Prompt Lab"
+          >
+            ? Docs
+          </button>
+        </div>
+      </header>
+
+      <!-- ─── SIDEBAR ──────────────────────────────────────── -->
+      <aside id="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Versions</span>
+          <span class="version-count" id="version-count">0</span>
+        </div>
+        <div id="versions-list">
+          <div class="sidebar-empty" id="sidebar-empty">
+            No saved versions yet.<br />
+            Run a prompt and save it to start your history.
+          </div>
+        </div>
+      </aside>
+
+      <!-- ─── EDITOR PANEL ─────────────────────────────────── -->
+      <main id="editor-panel">
+        <!-- System Prompt (collapsible) -->
+        <div id="system-prompt-section">
+          <div id="system-prompt-toggle" onclick="toggleSystemPrompt()">
+            <span class="toggle-arrow">▶</span>
+            <span class="sys-label">System Prompt</span>
+            <span class="sys-set-dot" id="sys-set-dot"></span>
+          </div>
+          <div id="system-prompt-body">
+            <textarea
+              id="system-prompt-editor"
+              placeholder="Optional: give the model a persona or set of rules that apply to every run.&#10;&#10;Example: You are a concise travel expert. Always respond in bullet points."
+              spellcheck="false"
+              oninput="onSystemPromptInput()"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active" id="tab-prompt" onclick="switchTab('prompt')">
+            Prompt
+          </div>
+          <div class="tab" id="tab-vars" onclick="switchTab('vars')">
+            Variables
+            <span
+              id="var-count-badge"
+              style="
+                display: none;
+                margin-left: 4px;
+                background: var(--accent-blue);
+                color: #fff;
+                border-radius: 8px;
+                padding: 0 5px;
+                font-size: 10px;
+              "
+            ></span>
+          </div>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="copy-prompt-btn"
+            onclick="copyPrompt()"
+            title="Copy prompt text"
+          >
+            Copy prompt
+          </button>
+        </div>
+
+        <!-- Prompt Editor Tab -->
+        <div id="prompt-tab-content">
+          <div id="editor-wrapper">
+            <div id="prompt-highlight" aria-hidden="true"></div>
+            <textarea
+              id="prompt-editor"
+              placeholder="Write your prompt here. Use {{variableName}} for variables.
+Cmd+Click (Mac) or Ctrl+Click (Win) on a {{variable}} to jump to it.
+
+Example:
+Plan a {{tripType}} trip from {{origin}} to {{destination}} covering {{maxKm}} km."
+              spellcheck="false"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Variables Tab -->
+        <div id="vars-tab-content" class="hidden">
+          <div style="padding: 12px 16px 0; flex-shrink: 0">
+            <div class="vars-add-row">
+              <button
+                class="btn btn-ghost btn-sm"
+                onclick="addVariable()"
+                style="white-space: nowrap"
+              >
+                + Add Variable
+              </button>
+              <span
+                style="
+                  font-size: 11px;
+                  color: var(--text-muted);
+                  padding-top: 5px;
+                "
+              >
+                Variables are injected as
+                <code
+                  style="
+                    font-family: var(--font-mono);
+                    color: var(--var-highlight-color);
+                  "
+                  >{{name}}</code
+                >
+                in your prompt
+              </span>
+            </div>
+          </div>
+          <div
+            id="vars-list"
+            style="flex: 1; overflow-y: auto; padding: 0 16px 16px"
+          >
+            <div class="vars-empty" id="vars-empty">
+              No variables yet.<br />
+              Add one above, or type <code>{{</code> in your prompt.
+            </div>
+          </div>
+        </div>
+
+        <!-- Run toolbar -->
+        <div id="run-toolbar">
+          <button
+            class="btn btn-primary"
+            id="run-btn"
+            onclick="runPrompt()"
+            title="Run (⌘Enter)"
+          >
+            ▶ Run
+          </button>
+          <button
+            class="btn btn-danger"
+            id="cancel-btn"
+            style="display: none"
+            onclick="cancelRun()"
+          >
+            ✕ Cancel
+          </button>
+          <span id="elapsed-display"></span>
+          <kbd>⌘↵</kbd>
+          <div id="live-token-count" title="Estimated prompt tokens">
+            ~<span class="tok-num" id="tok-num">0</span> tok
+          </div>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="code-btn"
+            onclick="showCodeModal()"
+            title="Copy as JS fetch code"
+          >
+            &#60;/&#62; Code
+          </button>
+        </div>
+
+        <!-- JSON Schema Section -->
+        <div id="json-schema-section">
+          <div id="json-schema-toggle-row">
+            <input
+              type="checkbox"
+              class="json-toggle-checkbox"
+              id="json-mode-checkbox"
+              onchange="onJsonModeToggle()"
+            />
+            <label
+              class="json-toggle-label"
+              id="json-toggle-label"
+              for="json-mode-checkbox"
+              >Get structured JSON output</label
+            >
+          </div>
+          <div id="json-schema-body">
+            <div class="schema-stale-banner" id="schema-stale-banner">
+              ⚠ Prompt changed —
+              <button
+                class="btn btn-ghost btn-sm"
+                style="padding: 2px 8px"
+                onclick="generateSchema()"
+              >
+                Regenerate schema
+              </button>
+            </div>
+            <div class="schema-toolbar">
+              <span class="schema-status" id="schema-status"
+                >Edit schema or regenerate from prompt</span
+              >
+              <button
+                class="btn btn-ghost btn-sm"
+                onclick="generateSchema()"
+                id="regen-schema-btn"
+              >
+                ⟳ Regenerate
+              </button>
+            </div>
+            <textarea
+              id="schema-editor"
+              placeholder='{"items":[{"name":"string","description":"string"}]}'
+              spellcheck="false"
+              oninput="onSchemaEditorInput()"
+            ></textarea>
+          </div>
+        </div>
+      </main>
+
+      <!-- ─── OUTPUT PANEL ─────────────────────────────────── -->
+      <aside id="output-panel">
+        <!-- Compare bar (visible in compare mode) -->
+        <div id="compare-bar">
+          <div class="compare-model-slot">
+            <span class="compare-slot-label a">A</span>
+            <select class="compare-model-select" id="compare-model-a">
+              <option value="gemini-2.5-flash-lite" selected>
+                gemini-2.5-flash-lite
+              </option>
+              <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+              <option value="gemini-3-flash-preview">gemini-3.0-flash</option>
+            </select>
+          </div>
+          <div class="compare-model-slot">
+            <span class="compare-slot-label b">B</span>
+            <select class="compare-model-select" id="compare-model-b">
+              <option value="gemini-2.5-flash-lite">
+                gemini-2.5-flash-lite
+              </option>
+              <option value="gemini-2.5-flash" selected>
+                gemini-2.5-flash
+              </option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+              <option value="gemini-3-flash-preview">gemini-3.0-flash</option>
+            </select>
+          </div>
+          <button
+            class="btn btn-primary btn-sm"
+            id="run-both-btn"
+            onclick="runBoth()"
+          >
+            ▶▶ Run Both
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            id="cancel-both-btn"
+            style="display: none"
+            onclick="cancelBoth()"
+          >
+            ✕ Cancel
+          </button>
+        </div>
+
+        <!-- Compare panes (visible in compare mode) -->
+        <div id="compare-panes">
+          <div class="compare-pane" id="compare-pane-a">
+            <div class="compare-pane-toolbar">
+              <span class="compare-pane-label a">A</span>
+              <span class="compare-status idle" id="compare-status-a"
+                >idle</span
+              >
+              <span class="compare-elapsed" id="compare-elapsed-a"></span>
+              <button
+                class="btn btn-ghost btn-sm"
+                id="compare-copy-a"
+                style="display: none"
+                onclick="compareCopy('a')"
+              >
+                Copy
+              </button>
+              <button
+                class="btn btn-ghost btn-sm"
+                id="compare-save-a"
+                style="display: none"
+                onclick="compareSave('a')"
+                title="Save as version"
+              >
+                ＋ Save
+              </button>
+            </div>
+            <div class="compare-pane-body">
+              <div class="compare-placeholder" id="compare-ph-a">
+                <div style="font-size: 22px; opacity: 0.25">◈</div>
+                <div>Run to see output</div>
+              </div>
+              <div class="compare-output-text" id="compare-text-a"></div>
+              <div class="compare-output-error" id="compare-error-a"></div>
+            </div>
+          </div>
+          <div class="compare-pane" id="compare-pane-b">
+            <div class="compare-pane-toolbar">
+              <span class="compare-pane-label b">B</span>
+              <span class="compare-status idle" id="compare-status-b"
+                >idle</span
+              >
+              <span class="compare-elapsed" id="compare-elapsed-b"></span>
+              <button
+                class="btn btn-ghost btn-sm"
+                id="compare-copy-b"
+                style="display: none"
+                onclick="compareCopy('b')"
+              >
+                Copy
+              </button>
+              <button
+                class="btn btn-ghost btn-sm"
+                id="compare-save-b"
+                style="display: none"
+                onclick="compareSave('b')"
+                title="Save as version"
+              >
+                ＋ Save
+              </button>
+            </div>
+            <div class="compare-pane-body">
+              <div class="compare-placeholder" id="compare-ph-b">
+                <div style="font-size: 22px; opacity: 0.25">◈</div>
+                <div>Run to see output</div>
+              </div>
+              <div class="compare-output-text" id="compare-text-b"></div>
+              <div class="compare-output-error" id="compare-error-b"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single-mode output (hidden in compare mode) -->
+        <div class="output-toolbar" id="single-output-toolbar">
+          <span class="output-toolbar-title">Output</span>
+          <span id="output-status" class="idle">idle</span>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="save-version-btn"
+            style="display: none"
+            onclick="showSavePanel()"
+            title="Save this output as a version"
+          >
+            ＋ Save
+          </button>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="copy-btn"
+            style="display: none"
+            onclick="copyOutput()"
+          >
+            Copy
+          </button>
+        </div>
+
+        <div id="output-body">
+          <div id="output-placeholder">
+            <div class="placeholder-icon">◈</div>
+            <div>Run a prompt to see output here.</div>
+            <div
+              style="margin-top: 4px; font-size: 11px; color: var(--text-muted)"
+            >
+              Elapsed time will appear in the toolbar.
+            </div>
+          </div>
+          <div id="output-text"></div>
+          <div id="output-error"></div>
+        </div>
+
+        <div id="cancel-warning">
+          ⚠ Still waiting — this model thinks deeply. You can cancel or keep
+          waiting.
+        </div>
+
+        <div id="grounding-section">
+          <div class="grounding-label">Sources</div>
+          <div class="grounding-chips" id="grounding-chips"></div>
+        </div>
+
+        <div id="save-panel">
+          <div class="save-panel-title">Save Version</div>
+          <div class="save-row">
+            <input
+              type="text"
+              id="save-name"
+              class="save-name-input"
+              placeholder="v1 — initial draft"
+            />
+            <div class="flag-toggle">
+              <button
+                class="flag-btn pass active"
+                id="flag-pass"
+                onclick="setFlag('pass')"
+              >
+                ✓ Pass
+              </button>
+              <button
+                class="flag-btn fail"
+                id="flag-fail"
+                onclick="setFlag('fail')"
+              >
+                ✗ Fail
+              </button>
+            </div>
+          </div>
+          <textarea
+            id="save-annotation"
+            class="save-annotation"
+            placeholder="What changed? What improved? What broke? (optional)"
+          ></textarea>
+          <div class="save-actions">
+            <button class="btn btn-primary btn-sm" onclick="saveVersion()">
+              Save
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="dismissSave()">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <!-- #app -->
+
+    <!-- Code Modal -->
+    <div id="code-modal-overlay" onclick="closeCodeModal(event)">
+      <div id="code-modal">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title" id="code-modal-title">Copy as Code</div>
+            <div class="modal-subtitle" id="code-modal-subtitle">
+              Ready to paste into your project
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="closeCodeModal()">
+            ✕
+          </button>
+        </div>
+        <div id="code-modal-controls">
+          <label
+            class="code-ctrl-label"
+            id="with-vars-label"
+            style="display: none"
+          >
+            <input
+              type="checkbox"
+              class="code-ctrl-cb"
+              id="with-vars-cb"
+              onchange="onWithVarsToggle()"
+            />
+            With variables
+          </label>
+          <div
+            class="code-ctrl-divider"
+            id="lang-divider"
+            style="display: none"
+          ></div>
+          <div id="lang-select-wrapper">
+            <span
+              style="
+                font-size: 11px;
+                font-family: var(--font-mono);
+                color: var(--text-muted);
+              "
+              >Language:</span
+            >
+            <select id="lang-select" onchange="refreshCodeModal()">
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python</option>
+              <option value="dart">Dart</option>
+              <option value="kotlin">Kotlin</option>
+              <option value="swift">Swift</option>
+              <option value="go">Go</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div id="code-output"></div>
+        </div>
+        <div class="modal-footer">
+          <span
+            id="token-display"
+            style="
+              font-family: var(--font-mono);
+              font-size: 11px;
+              color: var(--text-muted);
+              margin-right: auto;
+              align-self: center;
+            "
+          ></span>
+          <button class="btn btn-ghost btn-sm" onclick="closeCodeModal()">
+            Close
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="copyCode()">
+            Copy Code
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="autocomplete"></div>
+
+    <!-- JSON Explain Modal -->
+    <div id="json-explain-overlay">
+      <div id="json-explain-modal">
+        <div class="explain-header">
+          <div class="explain-title">What is structured JSON output?</div>
+        </div>
+        <div class="explain-body">
+          Instead of a paragraph of text, the AI returns
+          <strong>structured data</strong> you can use directly in code,
+          spreadsheets, or other tools. <br /><br />
+          For example, asking
+          <em>"Show me sightseeing points in Paris"</em> normally returns prose.
+          With JSON mode, you get:
+          <pre>
+{"points":[{"name":"Eiffel Tower","category":"Landmark","duration":"2 hours"},...]}</pre
+          >
+          We'll suggest a schema based on your prompt. You can edit it before
+          confirming. The schema tells the AI exactly what fields to return.
+        </div>
+        <div class="explain-footer">
+          <label class="explain-dont-show">
+            <input type="checkbox" id="dont-show-explain" /> Don't show this
+            again
+          </label>
+          <button
+            class="btn btn-ghost btn-sm"
+            onclick="closeExplainModal(false)"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            onclick="closeExplainModal(true)"
+          >
+            Got it — suggest a schema
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Docs Modal -->
+    <div id="docs-overlay" onclick="onDocsOverlayClick(event)">
+      <div id="docs-modal">
+        <div class="docs-header">
+          <div>
+            <div class="docs-header-title">
+              ⚗ Gemini Prompt Lab — How to Use
+            </div>
+            <div class="docs-header-sub">
+              v1.1 · Single HTML file · All data stored locally
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="closeDocs()">✕</button>
+        </div>
+        <div class="docs-body">
+          <div class="docs-section">
+            <div class="docs-section-title">Getting Started</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🔑</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Enter your Gemini API key</div>
+                <div class="docs-item-desc">
+                  Paste your key into the <strong>API Key</strong> field in the
+                  header. The dot turns green when a valid-looking key is
+                  detected. Your key is stored in <code>localStorage</code> and
+                  sent only to Google's API — never anywhere else.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🤖</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Choose a model</div>
+                <div class="docs-item-desc">
+                  <code>gemini-2.5-flash-lite</code> is the fastest and cheapest
+                  — good for iteration. <code>gemini-2.5-flash</code> is a
+                  thinking model and may take 2–4 minutes on complex prompts —
+                  this is normal, not a hang. <code>gemini-3.0-flash</code> is a
+                  capacity-limited preview and may return 503 errors under load.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">📄</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Open as a local file</div>
+                <div class="docs-item-desc">
+                  This tool makes API calls directly from your browser. It must
+                  be opened by double-clicking the HTML file or dragging it into
+                  a browser tab — not inside a sandboxed iframe — otherwise the
+                  fetch will be blocked by the browser.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Writing Prompts</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">✏️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Prompt editor</div>
+                <div class="docs-item-desc">
+                  Write your prompt in the centre panel.
+                  <code>{{variableName}}</code> tokens are highlighted in amber
+                  — these are placeholders replaced with variable values before
+                  the prompt is sent. A live estimated token count is shown in
+                  the run toolbar.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🔧</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  System Prompt <span class="docs-badge tip">optional</span>
+                </div>
+                <div class="docs-item-desc">
+                  Click <strong>System Prompt</strong> at the top of the editor
+                  to expand a collapsible field. Use it for a persona or
+                  standing instructions that apply to every run — e.g.
+                  <code
+                    >You are a concise travel expert. Always respond in bullet
+                    points.</code
+                  >
+                  A purple dot appears when a system prompt is active.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">📋</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Copy Prompt</div>
+                <div class="docs-item-desc">
+                  The <strong>Copy prompt</strong> button in the tab bar copies
+                  the raw prompt text including <code>{{variable}}</code> tokens
+                  as written — not the injected version with values substituted
+                  in.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Variables</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🧩</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Defining variables</div>
+                <div class="docs-item-desc">
+                  Type <code>{{anyName}}</code> in the prompt — the variable is
+                  automatically created in the Variables tab with an empty
+                  value. You can also click <strong>+ Add Variable</strong> in
+                  the Variables tab manually. Every <code>{{name}}</code> token
+                  is replaced with its value at run time.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">⚡</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Autocomplete</div>
+                <div class="docs-item-desc">
+                  Type <code>{{</code> in the editor to open a dropdown of all
+                  defined variables. <span class="docs-kbd">Tab</span> cycles
+                  through options. <span class="docs-kbd">Enter</span> selects
+                  the highlighted item.
+                  <span class="docs-kbd">↑ ↓</span> navigates.
+                  <span class="docs-kbd">Esc</span> dismisses.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🎯</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  Jump to variable <span class="docs-badge tip">shortcut</span>
+                </div>
+                <div class="docs-item-desc">
+                  <span class="docs-kbd">Cmd+Click</span> (Mac) or
+                  <span class="docs-kbd">Ctrl+Click</span> (Windows) on any
+                  <code>{{variable}}</code> token in the editor to jump to the
+                  Variables tab with the cursor placed in that variable's value
+                  field — ready to type.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🛡️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Run guards</div>
+                <div class="docs-item-desc">
+                  Run is blocked if any <code>{{variable}}</code> token is
+                  undefined, or if a defined variable has an empty value. Both
+                  cases show a toast with the offending variable names.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Running</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">▶️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  Run <span class="docs-badge tip">shortcut</span>
+                </div>
+                <div class="docs-item-desc">
+                  Click <strong>▶ Run</strong> or press
+                  <span class="docs-kbd">⌘↵</span> (Mac) /
+                  <span class="docs-kbd">Ctrl+Enter</span> (Windows) from
+                  anywhere. Status cycles:
+                  <code>idle → running → done / error / aborted</code>. Elapsed
+                  time is shown live in the toolbar.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">✕</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Cancel / Abort</div>
+                <div class="docs-item-desc">
+                  The <strong>Cancel</strong> button appears as soon as a run
+                  starts. Clicking it sets the status to
+                  <code>aborted</code> (amber) and shows
+                  <em>⚠ Aborted by user</em>. The HTTP request may complete in
+                  the background but the result is discarded.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">⏱️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Slow responses</div>
+                <div class="docs-item-desc">
+                  After 90 seconds a warning banner appears. This is expected
+                  for <code>gemini-2.5-flash</code> on complex prompts — it is a
+                  thinking model. You can cancel or keep waiting.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Output</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">📊</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  Collapsible JSON tree <span class="docs-badge new">new</span>
+                </div>
+                <div class="docs-item-desc">
+                  When the model returns valid JSON, it renders as an
+                  interactive tree. Depth 0–1 is expanded by default. Deeper
+                  nodes show a summary like <code>[10 items]</code> and expand
+                  on click. <strong>Copy</strong> always copies raw JSON
+                  regardless of expand/collapse state.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🔗</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Grounding sources</div>
+                <div class="docs-item-desc">
+                  If the model returns grounding metadata (search sources),
+                  clickable source chips appear below the output. Each chip
+                  links to the original source.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Structured JSON Output</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🗂️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  JSON mode <span class="docs-badge new">new</span>
+                </div>
+                <div class="docs-item-desc">
+                  Check <strong>Get structured JSON output</strong> at the
+                  bottom of the editor. A schema editor appears — Gemini
+                  suggests a schema based on your prompt which you can freely
+                  edit. At run time the schema is appended as instructions and
+                  <code>response_mime_type: application/json</code> is set,
+                  constraining the output to valid JSON.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">⚠️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">JSON mode guards</div>
+                <div class="docs-item-desc">
+                  Run is blocked if the schema contains invalid JSON (border
+                  turns red). If you edit the prompt after generating a schema,
+                  a stale banner appears — click
+                  <strong>⟳ Regenerate</strong> for a fresh suggestion.
+                  Unchecking hides the panel but preserves your schema.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Version History</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">💾</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Saving a version</div>
+                <div class="docs-item-desc">
+                  After a successful run a <strong>Save Version</strong> panel
+                  slides up. Give it a name (auto-suggested as <code>v1</code>,
+                  <code>v2</code>…), mark it <strong>✓ Pass</strong> or
+                  <strong>✗ Fail</strong>, and add an optional annotation. The
+                  <strong>＋ Save</strong> button in the output toolbar reopens
+                  this panel if you dismissed it. Up to 20 versions are kept
+                  (free tier).
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🕐</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Restoring a version</div>
+                <div class="docs-item-desc">
+                  Click any version in the left sidebar to restore that prompt,
+                  variables, system prompt, and JSON schema to the editor.
+                  Versions survive page refresh — they are stored in
+                  <code>localStorage</code>.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🗑️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Deleting a version</div>
+                <div class="docs-item-desc">
+                  Hover a version in the sidebar — an <strong>×</strong> appears
+                  top-right. Click to delete permanently.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">
+              Compare Mode <span class="docs-badge new">new</span>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">⊞</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Enabling compare mode</div>
+                <div class="docs-item-desc">
+                  Click <strong>⊞ Compare</strong> in the header. The button
+                  turns blue and the output area splits into two side-by-side
+                  panes — <strong>A</strong> (blue) and
+                  <strong>B</strong> (purple). Click again to exit and return to
+                  single-pane view. All existing output and saved versions are
+                  unaffected.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">🤖</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Choosing models</div>
+                <div class="docs-item-desc">
+                  Two model dropdowns appear in the compare bar — one per pane.
+                  They default to <code>gemini-2.5-flash-lite</code> (A) vs
+                  <code>gemini-2.5-flash</code> (B), the most natural
+                  speed-vs-quality comparison. You can also run the same model
+                  twice with a different system prompt or different variable
+                  values to isolate what changed.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">▶</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">
+                  Running both sides
+                  <span class="docs-badge tip">shortcut</span>
+                </div>
+                <div class="docs-item-desc">
+                  Click <strong>▶▶ Run Both</strong> or press
+                  <span class="docs-kbd">⌘↵</span> /
+                  <span class="docs-kbd">Ctrl+Enter</span> — both API calls fire
+                  in parallel. Each pane shows its own live elapsed timer and
+                  status pill (<code>running → done / error / aborted</code>).
+                  <strong>✕ Cancel</strong> aborts both simultaneously. JSON
+                  tree and grounding chips render per-pane independently.
+                </div>
+              </div>
+            </div>
+            <div class="docs-item">
+              <div class="docs-item-icon">💾</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Saving from compare</div>
+                <div class="docs-item-desc">
+                  Each pane has its own <strong>Copy</strong> and
+                  <strong>＋ Save</strong> buttons. Versions saved from compare
+                  runs appear in the sidebar with a small <code>A</code> or
+                  <code>B</code> badge so you always know which side they came
+                  from.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Export</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">💻</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">Copy as JavaScript</div>
+                <div class="docs-item-desc">
+                  Click <strong>&lt;/&gt; Code</strong> in the run toolbar to
+                  open the code export modal. By default it generates an
+                  injected JavaScript <code>fetch()</code> snippet — values
+                  already baked in, ready to run. If your prompt uses variables,
+                  a <strong>With variables</strong> checkbox appears — tick it
+                  to get a language dropdown. Choose from JavaScript,
+                  TypeScript, Python, Dart, Kotlin, Swift, or Go. The generated
+                  snippet declares your variables at the top by name so you can
+                  edit them. API key is always a placeholder — replace with your
+                  key or an environment variable. Click
+                  <strong>Copy Code</strong> to copy.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="docs-section-title">Keyboard Shortcuts</div>
+            <div class="docs-item">
+              <div class="docs-item-icon">⌨️</div>
+              <div class="docs-item-body">
+                <div class="docs-item-title">All shortcuts</div>
+                <div
+                  class="docs-item-desc"
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    margin-top: 2px;
+                  "
+                >
+                  <div>
+                    <span class="docs-kbd">⌘↵</span> /
+                    <span class="docs-kbd">Ctrl+Enter</span> &nbsp;— Run prompt
+                    (or Run Both in compare mode)
+                  </div>
+                  <div>
+                    <span class="docs-kbd">Cmd+Click</span> /
+                    <span class="docs-kbd">Ctrl+Click</span> on
+                    <code>{{var}}</code> &nbsp;— Jump to variable value
+                  </div>
+                  <div>
+                    <span class="docs-kbd">Tab</span> in autocomplete &nbsp;—
+                    Cycle options
+                  </div>
+                  <div>
+                    <span class="docs-kbd">Enter</span> in autocomplete &nbsp;—
+                    Select highlighted option
+                  </div>
+                  <div>
+                    <span class="docs-kbd">↑ ↓</span> in autocomplete &nbsp;—
+                    Navigate options
+                  </div>
+                  <div>
+                    <span class="docs-kbd">Esc</span> &nbsp;— Dismiss
+                    autocomplete or close any modal
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="docs-footer">
+          <span class="docs-version"
+            >Gemini Prompt Lab · v2.0 · Single HTML file · localStorage
+            only</span
+          >
+          <button class="btn btn-primary btn-sm" onclick="closeDocs()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+      // ─────────────────────────────────────────────────────────────────────────────
+      // STATE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      let state = {
+        variables: [],
+        versions: [],
+        currentFlag: "pass",
+        isRunning: false,
+        lastOutput: null,
+        lastTokenCount: null,
+        jsonMode: false,
+        schemaText: "",
+        schemaConfirmedForPrompt: "", // the prompt text when schema was last generated
+      };
+
+      let abortController = null;
+      let runCancelled = false;
+      let elapsedTimer = null;
+      let cancelWarningTimer = null;
+      let elapsedSeconds = 0;
+      let autocompleteVisible = false;
+      let autocompleteIndex = -1;
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // PERSISTENCE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function save() {
+        localStorage.setItem(
+          "promptlab_state",
+          JSON.stringify({
+            versions: state.versions,
+            variables: state.variables,
+            promptText: document.getElementById("prompt-editor").value,
+            systemPrompt: document.getElementById("system-prompt-editor").value,
+            systemPromptOpen: document
+              .getElementById("system-prompt-toggle")
+              .classList.contains("open"),
+            apiKey: document.getElementById("api-key-input").value,
+            model: document.getElementById("model-select").value,
+            jsonMode: state.jsonMode,
+            schemaText: state.schemaText,
+            schemaConfirmedForPrompt: state.schemaConfirmedForPrompt,
+          }),
+        );
+      }
+
+      function load() {
+        try {
+          const raw = localStorage.getItem("promptlab_state");
+          if (!raw) return;
+          const d = JSON.parse(raw);
+          if (d.versions) state.versions = d.versions;
+          if (d.variables) state.variables = d.variables;
+          if (d.promptText)
+            document.getElementById("prompt-editor").value = d.promptText;
+          if (d.systemPrompt) {
+            document.getElementById("system-prompt-editor").value =
+              d.systemPrompt;
+            updateSysSetDot();
+          }
+          if (d.systemPromptOpen) {
+            document
+              .getElementById("system-prompt-toggle")
+              .classList.add("open");
+            document.getElementById("system-prompt-body").classList.add("open");
+          }
+          if (d.apiKey) {
+            document.getElementById("api-key-input").value = d.apiKey;
+            updateApiKeyStatus();
+          }
+          if (d.model) document.getElementById("model-select").value = d.model;
+          if (d.jsonMode) {
+            state.jsonMode = true;
+            state.schemaText = d.schemaText || "";
+            state.schemaConfirmedForPrompt = d.schemaConfirmedForPrompt || "";
+            document.getElementById("json-mode-checkbox").checked = true;
+            document
+              .getElementById("json-toggle-label")
+              .classList.add("active");
+            document.getElementById("json-schema-body").classList.add("open");
+            document.getElementById("schema-editor").value = state.schemaText;
+            checkSchemaStaleness();
+          }
+        } catch (e) {}
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // INIT
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      document.addEventListener("DOMContentLoaded", () => {
+        load();
+        renderVersions();
+        renderVariables();
+        updateHighlight();
+        updateLiveTokenCount();
+
+        document
+          .getElementById("api-key-input")
+          .addEventListener("input", () => {
+            updateApiKeyStatus();
+            save();
+          });
+        document
+          .getElementById("model-select")
+          .addEventListener("change", save);
+
+        const editor = document.getElementById("prompt-editor");
+        editor.addEventListener("input", onEditorInput);
+        editor.addEventListener("keydown", onEditorKeydown);
+        editor.addEventListener("scroll", syncScroll);
+        editor.addEventListener("blur", () =>
+          setTimeout(hideAutocomplete, 120),
+        );
+        editor.addEventListener("click", onEditorClick);
+        editor.addEventListener("focus", () =>
+          document
+            .getElementById("editor-wrapper")
+            .classList.remove("schema-focused"),
+        );
+
+        const schemaEditor = document.getElementById("schema-editor");
+        schemaEditor.addEventListener("focus", () =>
+          document
+            .getElementById("editor-wrapper")
+            .classList.add("schema-focused"),
+        );
+        schemaEditor.addEventListener("blur", () =>
+          document
+            .getElementById("editor-wrapper")
+            .classList.remove("schema-focused"),
+        );
+
+        // Cmd+Enter / Ctrl+Enter to run
+        document.addEventListener("keydown", (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+            e.preventDefault();
+            if (compareMode) runBoth();
+            else if (!state.isRunning) runPrompt();
+          }
+          if (e.key === "Escape") {
+            closeCodeModal();
+            closeDocs();
+          }
+        });
+      });
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // TABS
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function switchTab(tab) {
+        document
+          .getElementById("prompt-tab-content")
+          .classList.toggle("hidden", tab !== "prompt");
+        document
+          .getElementById("vars-tab-content")
+          .classList.toggle("hidden", tab !== "vars");
+        document
+          .getElementById("tab-prompt")
+          .classList.toggle("active", tab === "prompt");
+        document
+          .getElementById("tab-vars")
+          .classList.toggle("active", tab === "vars");
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // API KEY
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function updateApiKeyStatus() {
+        const key = document.getElementById("api-key-input").value.trim();
+        const dot = document.getElementById("api-key-status");
+        dot.classList.toggle("set", key.length > 10);
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // PROMPT HIGHLIGHT + AUTOCOMPLETE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function updateHighlight() {
+        const editor = document.getElementById("prompt-editor");
+        const highlight = document.getElementById("prompt-highlight");
+        const text = editor.value;
+        const escaped = escapeHtml(text);
+        // Highlight {{...}} tokens
+        const highlighted = escaped.replace(/\{\{([^}]*)\}\}/g, (match) => {
+          return `<span class="var-token">${match}</span>`;
+        });
+        highlight.innerHTML = highlighted + "<br>";
+      }
+
+      function syncScroll() {
+        const editor = document.getElementById("prompt-editor");
+        const highlight = document.getElementById("prompt-highlight");
+        highlight.scrollTop = editor.scrollTop;
+      }
+
+      function onEditorClick(e) {
+        if (!e.metaKey && !e.ctrlKey) return; // Cmd+Click (Mac) or Ctrl+Click (Win/Linux) only
+        const editor = document.getElementById("prompt-editor");
+        const pos = editor.selectionStart;
+        const text = editor.value;
+
+        // Walk left to find opening {{
+        let start = pos;
+        while (
+          start > 1 &&
+          !(text[start - 1] === "{" && text[start - 2] === "{")
+        )
+          start--;
+        if (start < 2) return;
+        start -= 2; // include the {{
+
+        // Walk right to find closing }}
+        let end = pos;
+        while (
+          end < text.length - 1 &&
+          !(text[end] === "}" && text[end + 1] === "}")
+        )
+          end++;
+        if (
+          end >= text.length - 1 &&
+          !(text[end] === "}" && text[end + 1] === "}")
+        )
+          return;
+        end += 2; // include the }}
+
+        const token = text.slice(start, end);
+        const match = token.match(/^\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}$/);
+        if (!match) return;
+
+        const varName = match[1];
+        const variable = state.variables.find((v) => v.name === varName);
+        if (!variable) return;
+
+        // Switch to vars tab and focus the matching input
+        switchTab("vars");
+        setTimeout(() => {
+          const row = document.querySelector(
+            `.var-row[data-id="${variable.id}"]`,
+          );
+          if (!row) return;
+          row.scrollIntoView({ behavior: "smooth", block: "center" });
+          row.style.outline = `1px solid var(--accent-blue)`;
+          setTimeout(() => (row.style.outline = ""), 1200);
+          const valueInput = row.querySelector(".var-input:not(.name-input)");
+          if (valueInput) valueInput.focus();
+        }, 50);
+      }
+
+      function onEditorInput(e) {
+        updateHighlight();
+        autoCreateVariablesFromPrompt();
+        checkAutocomplete();
+        updateLiveTokenCount();
+        if (state.jsonMode && state.schemaText) checkSchemaStaleness();
+        save();
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // AUTOCOMPLETE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function getCaretInfo() {
+        const editor = document.getElementById("prompt-editor");
+        const text = editor.value;
+        const pos = editor.selectionStart;
+        // Look back for {{
+        const beforeCaret = text.slice(0, pos);
+        const braceIdx = beforeCaret.lastIndexOf("{{");
+        if (braceIdx === -1) return null;
+        const afterBrace = beforeCaret.slice(braceIdx + 2);
+        // Make sure no }} between {{ and caret
+        if (afterBrace.includes("}") || afterBrace.includes("\n")) return null;
+        return { query: afterBrace.toLowerCase(), braceIdx, pos };
+      }
+
+      function checkAutocomplete() {
+        const info = getCaretInfo();
+        if (!info || state.variables.length === 0) {
+          hideAutocomplete();
+          return;
+        }
+
+        const matches = state.variables.filter((v) =>
+          v.name.toLowerCase().startsWith(info.query),
+        );
+        if (matches.length === 0) {
+          hideAutocomplete();
+          return;
+        }
+
+        showAutocomplete(matches);
+      }
+
+      function showAutocomplete(matches) {
+        const editor = document.getElementById("prompt-editor");
+        const ac = document.getElementById("autocomplete");
+
+        // Position near caret
+        const rect = editor.getBoundingClientRect();
+        // Approximate line/column position
+        const lines = editor.value.slice(0, editor.selectionStart).split("\n");
+        const lineNum = lines.length - 1;
+        const lineH = parseFloat(getComputedStyle(editor).lineHeight) || 22;
+        const padTop = 14;
+        const top =
+          rect.top + padTop + (lineNum + 1) * lineH - editor.scrollTop;
+        const left = rect.left + 16;
+
+        ac.style.top = Math.min(top, window.innerHeight - 200) + "px";
+        ac.style.left = left + "px";
+
+        ac.innerHTML =
+          `<div class="autocomplete-header">Variables</div>` +
+          matches
+            .map(
+              (v, i) => `
+      <div class="autocomplete-item${i === autocompleteIndex ? " selected" : ""}"
+           onmousedown="insertVariable('${v.name}')"
+           onmouseover="autocompleteIndex=${i};updateAutocompleteSelection()">
+        <div>
+          <div class="autocomplete-item-name">{{${v.name}}}</div>
+          <div class="autocomplete-item-desc">${v.defaultValue ? escapeHtml(v.defaultValue) : "<em>no value</em>"}</div>
+        </div>
+      </div>
+    `,
+            )
+            .join("");
+
+        ac.style.display = "block";
+        autocompleteVisible = true;
+      }
+
+      function hideAutocomplete() {
+        document.getElementById("autocomplete").style.display = "none";
+        autocompleteVisible = false;
+        autocompleteIndex = -1;
+      }
+
+      function updateAutocompleteSelection() {
+        const items = document.querySelectorAll(".autocomplete-item");
+        items.forEach((el, i) =>
+          el.classList.toggle("selected", i === autocompleteIndex),
+        );
+      }
+
+      function insertVariable(name) {
+        const editor = document.getElementById("prompt-editor");
+        const info = getCaretInfo();
+        if (!info) return;
+        const text = editor.value;
+        const before = text.slice(0, info.braceIdx);
+        const after = text.slice(info.pos);
+        editor.value = before + "{{" + name + "}}" + after;
+        const newPos = before.length + name.length + 4;
+        editor.setSelectionRange(newPos, newPos);
+        editor.focus();
+        updateHighlight();
+        hideAutocomplete();
+        save();
+      }
+
+      function onEditorKeydown(e) {
+        if (!autocompleteVisible) return;
+        const items = document.querySelectorAll(".autocomplete-item");
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          autocompleteIndex = (autocompleteIndex + 1) % items.length;
+          updateAutocompleteSelection();
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          autocompleteIndex =
+            (autocompleteIndex - 1 + items.length) % items.length;
+          updateAutocompleteSelection();
+        } else if (e.key === "Tab") {
+          if (autocompleteVisible && items.length > 0) {
+            e.preventDefault();
+            if (items.length === 1) {
+              // Only one option — select immediately
+              const name = state.variables[0]?.name;
+              if (name) insertVariable(name);
+            } else {
+              // Cycle forward through list
+              autocompleteIndex = (autocompleteIndex + 1) % items.length;
+              updateAutocompleteSelection();
+            }
+          }
+        } else if (e.key === "Enter") {
+          if (
+            autocompleteVisible &&
+            autocompleteIndex >= 0 &&
+            items[autocompleteIndex]
+          ) {
+            e.preventDefault();
+            const info = getCaretInfo();
+            if (!info) return;
+            const matches = state.variables.filter((v) =>
+              v.name.toLowerCase().startsWith(info.query),
+            );
+            const name = matches[autocompleteIndex]?.name;
+            if (name) insertVariable(name);
+          }
+        } else if (e.key === "Escape") {
+          hideAutocomplete();
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // AUTO-CREATE VARIABLES FROM PROMPT
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function autoCreateVariablesFromPrompt() {
+        const text = document.getElementById("prompt-editor").value;
+        const matches = [...text.matchAll(/\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g)];
+        let added = false;
+        matches.forEach((m) => {
+          const name = m[1];
+          if (!state.variables.find((v) => v.name === name)) {
+            const id =
+              Date.now().toString(36) + Math.random().toString(36).slice(2);
+            state.variables.push({ id, name, defaultValue: "" });
+            added = true;
+          }
+        });
+        if (added) renderVariables();
+      }
+
+      function addVariable(name = "", value = "") {
+        const id =
+          Date.now().toString(36) + Math.random().toString(36).slice(2);
+        state.variables.push({ id, name, defaultValue: value });
+        renderVariables();
+        save();
+        // Focus new name input
+        setTimeout(() => {
+          const inputs = document.querySelectorAll(".var-input.name-input");
+          if (inputs.length) inputs[inputs.length - 1].focus();
+        }, 50);
+      }
+
+      function updateVariable(id, field, value) {
+        const v = state.variables.find((x) => x.id === id);
+        if (v) {
+          v[field] = value;
+          save();
+          updateHighlight();
+        }
+      }
+
+      function deleteVariable(id) {
+        state.variables = state.variables.filter((x) => x.id !== id);
+        renderVariables();
+        save();
+      }
+
+      function renderVariables() {
+        const list = document.getElementById("vars-list");
+        const empty = document.getElementById("vars-empty");
+        const badge = document.getElementById("var-count-badge");
+
+        if (state.variables.length === 0) {
+          empty.style.display = "block";
+          badge.style.display = "none";
+          // Remove all var rows
+          list.querySelectorAll(".var-row").forEach((el) => el.remove());
+          return;
+        }
+
+        empty.style.display = "none";
+        badge.style.display = "inline";
+        badge.textContent = state.variables.length;
+
+        // Rebuild
+        list.querySelectorAll(".var-row").forEach((el) => el.remove());
+        state.variables.forEach((v) => {
+          const row = document.createElement("div");
+          row.className = "var-row";
+          row.dataset.id = v.id;
+          row.innerHTML = `
+      <div class="var-field">
+        <div class="var-field-label">Name</div>
+        <input type="text" class="var-input name-input" placeholder="variableName" value="${escapeHtml(v.name)}"
+          oninput="updateVariable('${v.id}','name',this.value);checkAutocomplete()" />
+      </div>
+      <div class="var-field">
+        <div class="var-field-label">Default Value</div>
+        <input type="text" class="var-input" placeholder="value..." value="${escapeHtml(v.defaultValue)}"
+          oninput="updateVariable('${v.id}','defaultValue',this.value)" />
+      </div>
+      <button class="var-delete-btn" title="Delete variable" onclick="deleteVariable('${v.id}')">×</button>
+    `;
+          list.appendChild(row);
+        });
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // VERSIONS
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function renderVersions() {
+        const list = document.getElementById("versions-list");
+        const empty = document.getElementById("sidebar-empty");
+        document.getElementById("version-count").textContent =
+          state.versions.length;
+
+        list.querySelectorAll(".version-item").forEach((el) => el.remove());
+
+        if (state.versions.length === 0) {
+          empty.style.display = "block";
+          return;
+        }
+        empty.style.display = "none";
+
+        // Show newest first
+        [...state.versions].reverse().forEach((v) => {
+          const el = document.createElement("div");
+          el.className = "version-item";
+          el.dataset.id = v.id;
+          const d = new Date(v.timestamp);
+          const timeStr = d.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          el.innerHTML = `
+      <div class="version-item-header">
+        <div class="version-flag ${v.flag || "none"}"></div>
+        <div class="version-name">${escapeHtml(v.name)}${v.compareSide ? ` <span style="font-size:9px;padding:1px 5px;border-radius:6px;background:${v.compareSide === "a" ? "rgba(61,142,240,0.2)" : "rgba(155,127,232,0.2)"};color:${v.compareSide === "a" ? "var(--accent-blue)" : "var(--accent-purple)"};font-family:var(--font-mono);text-transform:uppercase;">${v.compareSide}</span>` : ""}</div>
+        <div class="version-time">${timeStr}</div>
+      </div>
+      ${v.annotation ? `<div class="version-annotation">${escapeHtml(v.annotation)}</div>` : ""}
+      <button class="version-delete-btn" title="Delete" onclick="deleteVersion('${v.id}',event)">×</button>
+    `;
+          el.addEventListener("click", () => restoreVersion(v.id));
+          list.appendChild(el);
+        });
+      }
+
+      function restoreVersion(id) {
+        const v = state.versions.find((x) => x.id === id);
+        if (!v) return;
+        document.getElementById("prompt-editor").value = v.prompt;
+        if (v.systemPrompt !== undefined) {
+          document.getElementById("system-prompt-editor").value =
+            v.systemPrompt;
+          updateSysSetDot();
+        }
+        state.variables = JSON.parse(JSON.stringify(v.variables || []));
+        renderVariables();
+        updateHighlight();
+        updateLiveTokenCount();
+
+        // Restore JSON mode
+        const jsonMode = v.jsonMode || false;
+        state.jsonMode = jsonMode;
+        state.schemaText = v.schemaText || "";
+        state.schemaConfirmedForPrompt = v.prompt || "";
+        document.getElementById("json-mode-checkbox").checked = jsonMode;
+        document
+          .getElementById("json-toggle-label")
+          .classList.toggle("active", jsonMode);
+        document
+          .getElementById("json-schema-body")
+          .classList.toggle("open", jsonMode);
+        document.getElementById("schema-editor").value = state.schemaText;
+        if (jsonMode && state.schemaText)
+          setSchemaStatus("ready", "✓ Schema restored with version");
+        // Mark active
+        document
+          .querySelectorAll(".version-item")
+          .forEach((el) => el.classList.toggle("active", el.dataset.id === id));
+        toast(`Restored: ${v.name}`);
+      }
+
+      function deleteVersion(id, e) {
+        e.stopPropagation();
+        state.versions = state.versions.filter((x) => x.id !== id);
+        renderVersions();
+        save();
+        toast("Version deleted");
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // VARIABLE INJECTION
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function injectVariables(promptText) {
+        let result = promptText;
+        state.variables.forEach((v) => {
+          if (!v.name) return;
+          const regex = new RegExp(
+            "\\{\\{" + v.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\}\\}",
+            "g",
+          );
+          result = result.replace(regex, v.defaultValue || "");
+        });
+        return result;
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // RUN
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      async function runPrompt() {
+        const apiKey = document.getElementById("api-key-input").value.trim();
+        if (!apiKey) {
+          toast("Enter your Gemini API key first");
+          return;
+        }
+
+        const rawPrompt = document.getElementById("prompt-editor").value.trim();
+        if (!rawPrompt) {
+          toast("Prompt is empty");
+          return;
+        }
+
+        const prompt = injectVariables(rawPrompt);
+
+        // Check for unresolved {{variables}}
+        const unresolved = [...prompt.matchAll(/\{\{([^}]+)\}\}/g)].map(
+          (m) => m[1],
+        );
+        if (unresolved.length > 0) {
+          const names = [...new Set(unresolved)]
+            .map((n) => `{{${n}}}`)
+            .join(", ");
+          toast(
+            `Undefined variable${unresolved.length > 1 ? "s" : ""}: ${names}`,
+          );
+          return;
+        }
+
+        // Check for variables with empty values
+        const emptyVars = state.variables.filter(
+          (v) => v.name && !v.defaultValue.trim(),
+        );
+        if (emptyVars.length > 0) {
+          const names = emptyVars.map((v) => `{{${v.name}}}`).join(", ");
+          toast(
+            `Empty variable${emptyVars.length > 1 ? "s" : ""}: ${names} — fill in a value before running`,
+          );
+          return;
+        }
+
+        // Validate JSON schema if mode is on
+        if (!validateSchemaForRun()) return;
+
+        const model = document.getElementById("model-select").value;
+
+        setRunningState(true);
+        clearOutput();
+        runCancelled = false;
+        // Show cancel button immediately — before any await
+        document.getElementById("cancel-btn").style.display = "inline-flex";
+        document.getElementById("run-btn").disabled = true;
+
+        const systemPrompt = document
+          .getElementById("system-prompt-editor")
+          .value.trim();
+
+        try {
+          // Build final prompt — append schema instruction if JSON mode
+          let finalPrompt = prompt;
+          const generationConfig = {};
+          if (state.jsonMode && state.schemaText) {
+            const schemaObj = JSON.parse(state.schemaText);
+            finalPrompt += `\n\nRespond ONLY with a valid JSON object or array matching this exact schema structure:\n${JSON.stringify(schemaObj)}\nDo not include any explanation, markdown, or code fences. Return raw JSON only.`;
+            generationConfig.response_mime_type = "application/json";
+          }
+
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const body = {
+            contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+            generationConfig,
+          };
+          if (systemPrompt) {
+            body.systemInstruction = { parts: [{ text: systemPrompt }] };
+          }
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+
+          if (runCancelled) {
+            return;
+          }
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            const msg = errData?.error?.message || `HTTP ${res.status}`;
+            throw new Error(msg);
+          }
+
+          const data = await res.json();
+          if (runCancelled) {
+            return;
+          }
+
+          // Extract text (handle thinking models with multi-part)
+          let text = "";
+          const parts = data?.candidates?.[0]?.content?.parts || [];
+          for (const part of parts) {
+            if (part.text) text += part.text;
+          }
+
+          if (!text) throw new Error("Empty response from model");
+
+          const tokenCount = data?.usageMetadata?.totalTokenCount || null;
+          state.lastOutput = text;
+          state.lastTokenCount = tokenCount;
+
+          displayOutput(text);
+          if (tokenCount) {
+            document.getElementById("token-display").textContent =
+              `${tokenCount.toLocaleString()} tokens used`;
+          }
+          updateLiveTokenCount();
+
+          // Grounding
+          const chunks =
+            data?.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+          showGrounding(chunks);
+
+          setRunningState(false);
+          showSavePanel();
+        } catch (err) {
+          setRunningState(false);
+          if (err.message === "Failed to fetch") {
+            showError(
+              'Failed to fetch — this tool must be opened as a local file, not inside an iframe.\n\nClick "⬇ Download to use" in the header, then open the file directly in your browser.',
+            );
+          } else {
+            showError(err.message || "Unknown error");
+          }
+        }
+      }
+
+      function cancelRun() {
+        runCancelled = true;
+        clearWarningTimer();
+        stopElapsedTimer();
+        document.getElementById("cancel-btn").style.display = "none";
+        document.getElementById("run-btn").disabled = false;
+        document.getElementById("cancel-warning").classList.remove("visible");
+        state.isRunning = false;
+        const status = document.getElementById("output-status");
+        status.className = "aborted";
+        status.textContent = "aborted";
+        showError("⚠ Aborted by user");
+      }
+
+      function setRunningState(running) {
+        state.isRunning = running;
+        document.getElementById("run-btn").disabled = running;
+        document.getElementById("cancel-btn").style.display = running
+          ? "inline-flex"
+          : "none";
+
+        const status = document.getElementById("output-status");
+
+        if (running) {
+          startElapsedTimer();
+          status.className = "running";
+          status.textContent = "running";
+          document.getElementById("copy-btn").style.display = "none";
+          document.getElementById("save-version-btn").style.display = "none";
+          cancelWarningTimer = setTimeout(() => {
+            document.getElementById("cancel-warning").classList.add("visible");
+          }, 90000);
+        } else {
+          stopElapsedTimer();
+          clearWarningTimer();
+          document.getElementById("cancel-warning").classList.remove("visible");
+          if (status.className === "running") {
+            status.className = "idle";
+            status.textContent = "idle";
+          }
+        }
+      }
+
+      function clearWarningTimer() {
+        if (cancelWarningTimer) {
+          clearTimeout(cancelWarningTimer);
+          cancelWarningTimer = null;
+        }
+      }
+
+      function startElapsedTimer() {
+        elapsedSeconds = 0;
+        const display = document.getElementById("elapsed-display");
+        display.className = "running";
+        display.textContent = "0s";
+        elapsedTimer = setInterval(() => {
+          elapsedSeconds++;
+          const m = Math.floor(elapsedSeconds / 60);
+          const s = elapsedSeconds % 60;
+          display.textContent = m > 0 ? `${m}m ${s}s` : `${elapsedSeconds}s`;
+        }, 1000);
+      }
+
+      function stopElapsedTimer() {
+        if (elapsedTimer) {
+          clearInterval(elapsedTimer);
+          elapsedTimer = null;
+        }
+        const display = document.getElementById("elapsed-display");
+        display.classList.remove("running");
+      }
+
+      function clearOutput() {
+        document.getElementById("output-placeholder").style.display = "none";
+        document.getElementById("output-text").style.display = "none";
+        document.getElementById("output-text").innerHTML = "";
+        document.getElementById("output-error").style.display = "none";
+        document.getElementById("output-error").textContent = "";
+        document.getElementById("token-display").textContent = "";
+        document
+          .getElementById("grounding-section")
+          .classList.remove("visible");
+        document.getElementById("save-panel").classList.remove("visible");
+      }
+
+      function displayOutput(text) {
+        const outputText = document.getElementById("output-text");
+        const status = document.getElementById("output-status");
+        status.className = "done";
+        status.textContent = `done · ${elapsedSeconds}s`;
+
+        const trimmed = text.trim();
+        let isJson = false;
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            outputText.innerHTML = "";
+            const tree = document.createElement("div");
+            tree.className = "json-tree";
+            renderJsonTree(parsed, tree, true, true);
+            outputText.appendChild(tree);
+            isJson = true;
+          } catch (e) {}
+        }
+        if (!isJson) {
+          outputText.textContent = text;
+        }
+
+        outputText.style.display = "block";
+        document.getElementById("copy-btn").style.display = "inline-flex";
+        document.getElementById("save-version-btn").style.display =
+          "inline-flex";
+      }
+
+      function showError(msg) {
+        const status = document.getElementById("output-status");
+        status.className = "error";
+        status.textContent = "error";
+        const errEl = document.getElementById("output-error");
+        errEl.textContent = "⚠ " + msg;
+        errEl.style.display = "block";
+      }
+
+      function showGrounding(chunks) {
+        if (!chunks || chunks.length === 0) return;
+        const section = document.getElementById("grounding-section");
+        const container = document.getElementById("grounding-chips");
+        container.innerHTML = "";
+        chunks.slice(0, 8).forEach((chunk) => {
+          const uri = chunk?.web?.uri || chunk?.retrievedContext?.uri;
+          const title =
+            chunk?.web?.title || chunk?.retrievedContext?.title || uri;
+          if (!uri) return;
+          const chip = document.createElement("a");
+          chip.className = "chip";
+          chip.href = uri;
+          chip.target = "_blank";
+          chip.rel = "noopener";
+          chip.innerHTML = `<div class="chip-dot"></div>${escapeHtml(title || uri)}`;
+          container.appendChild(chip);
+        });
+        if (container.children.length > 0) section.classList.add("visible");
+      }
+
+      // JSON syntax highlighting
+      function syntaxHighlightJson(json) {
+        return escapeHtml(json).replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          (match) => {
+            if (/^"/.test(match)) {
+              if (/:$/.test(match))
+                return `<span class="json-key">${match}</span>`;
+              return `<span class="json-str">${match}</span>`;
+            }
+            if (/true|false/.test(match))
+              return `<span class="json-bool">${match}</span>`;
+            if (/null/.test(match))
+              return `<span class="json-null">${match}</span>`;
+            return `<span class="json-num">${match}</span>`;
+          },
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // SAVE VERSION
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function showSavePanel() {
+        const panel = document.getElementById("save-panel");
+        panel.classList.add("visible");
+
+        // Auto-suggest version name
+        const n = state.versions.length + 1;
+        const nameInput = document.getElementById("save-name");
+        if (!nameInput.value) nameInput.value = `v${n}`;
+        document.getElementById("save-annotation").value = "";
+        setFlag("pass");
+      }
+
+      function setFlag(flag) {
+        state.currentFlag = flag;
+        document
+          .getElementById("flag-pass")
+          .classList.toggle("active", flag === "pass");
+        document
+          .getElementById("flag-fail")
+          .classList.toggle("active", flag === "fail");
+      }
+
+      function saveVersion() {
+        const name =
+          document.getElementById("save-name").value.trim() ||
+          `v${state.versions.length + 1}`;
+        const annotation = document
+          .getElementById("save-annotation")
+          .value.trim();
+
+        const id =
+          Date.now().toString(36) + Math.random().toString(36).slice(2);
+        state.versions.push({
+          id,
+          name,
+          prompt: document.getElementById("prompt-editor").value,
+          systemPrompt: document.getElementById("system-prompt-editor").value,
+          variables: JSON.parse(JSON.stringify(state.variables)),
+          annotation,
+          flag: state.currentFlag,
+          timestamp: Date.now(),
+          tokenCount: state.lastTokenCount,
+          jsonMode: state.jsonMode,
+          schemaText: state.schemaText,
+        });
+
+        // Trim to 20 (free tier)
+        if (state.versions.length > 20)
+          state.versions = state.versions.slice(-20);
+
+        renderVersions();
+        save();
+        document.getElementById("save-panel").classList.remove("visible");
+        document.getElementById("save-name").value = "";
+        toast(`Saved: ${name}`);
+      }
+
+      function dismissSave() {
+        document.getElementById("save-panel").classList.remove("visible");
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // COPY OUTPUT
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function copyOutput() {
+        if (!state.lastOutput) return;
+        navigator.clipboard
+          .writeText(state.lastOutput)
+          .then(() => toast("Copied!"));
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // SYSTEM PROMPT
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function toggleSystemPrompt() {
+        const toggle = document.getElementById("system-prompt-toggle");
+        const body = document.getElementById("system-prompt-body");
+        const isOpen = toggle.classList.contains("open");
+        toggle.classList.toggle("open", !isOpen);
+        body.classList.toggle("open", !isOpen);
+        save();
+      }
+
+      function onSystemPromptInput() {
+        updateSysSetDot();
+        save();
+      }
+
+      function updateSysSetDot() {
+        const val = document
+          .getElementById("system-prompt-editor")
+          .value.trim();
+        document
+          .getElementById("sys-set-dot")
+          .classList.toggle("visible", val.length > 0);
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // LIVE TOKEN COUNTER
+      // Rough estimate: 1 token ≈ 4 chars (good enough for a live hint)
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function estimateTokens(text) {
+        return Math.ceil(text.length / 4);
+      }
+
+      function updateLiveTokenCount() {
+        const prompt = document.getElementById("prompt-editor").value;
+        const system = document.getElementById("system-prompt-editor").value;
+        const injected = injectVariables(prompt);
+        const total = estimateTokens(injected + system);
+
+        const el = document.getElementById("live-token-count");
+        const num = document.getElementById("tok-num");
+        num.textContent = total.toLocaleString();
+
+        el.classList.remove("warn", "danger");
+        if (total > 100000) el.classList.add("danger");
+        else if (total > 50000) el.classList.add("warn");
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // COPY AS CODE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      let generatedCode = "";
+
+      function showCodeModal() {
+        const rawPrompt = document.getElementById("prompt-editor").value;
+        const systemPrompt = document
+          .getElementById("system-prompt-editor")
+          .value.trim();
+        const model = document.getElementById("model-select").value;
+
+        // Detect variables actually used in the prompt
+        const usedVarNames = [
+          ...new Set(
+            [...rawPrompt.matchAll(/\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g)].map(
+              (m) => m[1],
+            ),
+          ),
+        ];
+        const definedVars = state.variables.filter(
+          (v) => v.name && usedVarNames.includes(v.name),
+        );
+        const hasVars = definedVars.length > 0;
+
+        // Show/hide "With variables" checkbox
+        const withVarsLabel = document.getElementById("with-vars-label");
+        const langDivider = document.getElementById("lang-divider");
+        withVarsLabel.style.display = hasVars ? "flex" : "none";
+        langDivider.style.display = hasVars ? "block" : "none";
+
+        if (!hasVars) {
+          document.getElementById("with-vars-cb").checked = false;
+          document
+            .getElementById("lang-select-wrapper")
+            .classList.remove("visible");
+        }
+
+        document.getElementById("code-modal-overlay").classList.add("open");
+        refreshCodeModal();
+      }
+
+      function onWithVarsToggle() {
+        const checked = document.getElementById("with-vars-cb").checked;
+        document
+          .getElementById("lang-select-wrapper")
+          .classList.toggle("visible", checked);
+        refreshCodeModal();
+      }
+
+      function refreshCodeModal() {
+        const rawPrompt = document.getElementById("prompt-editor").value;
+        const systemPrompt = document
+          .getElementById("system-prompt-editor")
+          .value.trim();
+        const model = document.getElementById("model-select").value;
+        const withVars = document.getElementById("with-vars-cb").checked;
+        const lang = document.getElementById("lang-select").value;
+
+        const usedVarNames = [
+          ...new Set(
+            [...rawPrompt.matchAll(/\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}/g)].map(
+              (m) => m[1],
+            ),
+          ),
+        ];
+        // Include ALL vars found in prompt — use state value if defined, else empty string
+        const stateVarMap = Object.fromEntries(
+          state.variables
+            .filter((v) => v.name)
+            .map((v) => [v.name, v.defaultValue]),
+        );
+        const vars = usedVarNames.map((name) => ({
+          name,
+          defaultValue: stateVarMap[name] ?? "",
+        }));
+
+        let code, langLabel;
+        if (!withVars) {
+          langLabel = "JavaScript";
+          code = genInjectedJS(rawPrompt, systemPrompt, model);
+        } else {
+          langLabel =
+            {
+              javascript: "JavaScript",
+              typescript: "TypeScript",
+              python: "Python",
+              dart: "Dart",
+              kotlin: "Kotlin",
+              swift: "Swift",
+              go: "Go",
+            }[lang] || lang;
+          const generators = {
+            javascript: genVarsJS,
+            typescript: genVarsTS,
+            python: genVarsPython,
+            dart: genVarsDart,
+            kotlin: genVarsKotlin,
+            swift: genVarsSwift,
+            go: genVarsGo,
+          };
+          code = (generators[lang] || genVarsJS)(
+            rawPrompt,
+            vars,
+            systemPrompt,
+            model,
+          );
+        }
+
+        generatedCode = code;
+        document.getElementById("code-modal-title").textContent =
+          `Copy as ${langLabel}`;
+        document.getElementById("code-modal-subtitle").textContent = withVars
+          ? "Variables declared at top — edit values to reuse"
+          : "Prompt injected — ready to run as-is";
+        document.getElementById("code-output").innerHTML =
+          syntaxHighlightCode(code);
+      }
+
+      // ── Helpers ───────────────────────────────────────────────────────────────────
+
+      function buildPromptWithInterp(raw, vars, tokenFn) {
+        let result = raw;
+        vars.forEach((v) => {
+          const re = new RegExp(
+            "\\{\\{" + v.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\}\\}",
+            "g",
+          );
+          result = result.replace(re, tokenFn(v.name));
+        });
+        return result;
+      }
+
+      // ── Default: injected JavaScript ──────────────────────────────────────────────
+      function genInjectedJS(rawPrompt, systemPrompt, model) {
+        const injected = injectVariables(rawPrompt);
+        const sysDecl = systemPrompt
+          ? `const SYSTEM_PROMPT = ${JSON.stringify(systemPrompt)};\n`
+          : "";
+        const sysLine = systemPrompt
+          ? `\n      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },`
+          : "";
+        return `const API_KEY = "YOUR_GEMINI_API_KEY"; // or process.env.GEMINI_API_KEY
+const MODEL   = "${model}";
+const PROMPT  = ${JSON.stringify(injected)};
+${sysDecl}
+async function run() {
+  const url = \`https://generativelanguage.googleapis.com/v1beta/models/\${MODEL}:generateContent?key=\${API_KEY}\`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: PROMPT }] }],${sysLine}
+      generationConfig: {}
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || \`HTTP \${res.status}\`); }
+  const data  = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const text  = parts.map(p => p.text || "").join("");
+  console.log(text);
+  return text;
+}
+run();`;
+      }
+
+      // ── JavaScript with variables ─────────────────────────────────────────────────
+      function genVarsJS(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => `const ${v.name} = ${JSON.stringify(v.defaultValue)};`)
+          .join("\n");
+        const prompt = buildPromptWithInterp(
+          rawPrompt,
+          vars,
+          (n) => `\${${n}}`,
+        );
+        const sysDecl = systemPrompt
+          ? `const SYSTEM_PROMPT = ${JSON.stringify(systemPrompt)};\n`
+          : "";
+        const sysLine = systemPrompt
+          ? `\n      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },`
+          : "";
+        return `const API_KEY = "YOUR_GEMINI_API_KEY"; // or process.env.GEMINI_API_KEY
+const MODEL   = "${model}";
+
+// — Variables —
+${varDecls}
+${sysDecl}
+const PROMPT = \`${prompt}\`;
+
+async function run() {
+  const url = \`https://generativelanguage.googleapis.com/v1beta/models/\${MODEL}:generateContent?key=\${API_KEY}\`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: PROMPT }] }],${sysLine}
+      generationConfig: {}
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || \`HTTP \${res.status}\`); }
+  const data  = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const text  = parts.map(p => p.text || "").join("");
+  console.log(text);
+  return text;
+}
+run();`;
+      }
+
+      // ── TypeScript with variables ─────────────────────────────────────────────────
+      function genVarsTS(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            const isNum = val !== "" && !isNaN(val);
+            return `const ${v.name}: ${isNum ? "number" : "string"} = ${isNum ? val : JSON.stringify(val)};`;
+          })
+          .join("\n");
+        const prompt = buildPromptWithInterp(
+          rawPrompt,
+          vars,
+          (n) => `\${${n}}`,
+        );
+        const sysDecl = systemPrompt
+          ? `const SYSTEM_PROMPT: string = ${JSON.stringify(systemPrompt)};\n`
+          : "";
+        const sysLine = systemPrompt
+          ? `\n      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },`
+          : "";
+        return `const API_KEY: string = "YOUR_GEMINI_API_KEY"; // or process.env.GEMINI_API_KEY!
+const MODEL: string = "${model}";
+
+// — Variables —
+${varDecls}
+${sysDecl}
+const PROMPT: string = \`${prompt}\`;
+
+async function run(): Promise<string> {
+  const url = \`https://generativelanguage.googleapis.com/v1beta/models/\${MODEL}:generateContent?key=\${API_KEY}\`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: PROMPT }] }],${sysLine}
+      generationConfig: {}
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error((e as any)?.error?.message || \`HTTP \${res.status}\`); }
+  const data  = await res.json() as any;
+  const parts = (data?.candidates?.[0]?.content?.parts || []) as any[];
+  const text  = parts.map((p: any) => p.text || "").join("");
+  console.log(text);
+  return text;
+}
+run();`;
+      }
+
+      // ── Python with variables ─────────────────────────────────────────────────────
+      function genVarsPython(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            return `${v.name} = ${val !== "" && !isNaN(val) ? val : JSON.stringify(val)}`;
+          })
+          .join("\n");
+        const prompt = buildPromptWithInterp(rawPrompt, vars, (n) => `{${n}}`);
+        const sysBlock = systemPrompt
+          ? `\n        "systemInstruction": {"parts": [{"text": ${JSON.stringify(systemPrompt)}}]},`
+          : "";
+        return `import requests
+
+API_KEY = "YOUR_GEMINI_API_KEY"  # or os.environ["GEMINI_API_KEY"]
+MODEL   = "${model}"
+
+# — Variables —
+${varDecls}
+
+PROMPT = f"""${prompt}"""
+
+def run():
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={API_KEY}"
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": PROMPT}]}],${sysBlock}
+        "generationConfig": {}
+    }
+    res = requests.post(url, json=payload)
+    res.raise_for_status()
+    parts = res.json().get("candidates", [{}])[0].get("content", {}).get("parts", [])
+    text = "".join(p.get("text", "") for p in parts)
+    print(text)
+    return text
+
+run()`;
+      }
+
+      // ── Dart with variables ───────────────────────────────────────────────────────
+      function genVarsDart(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            const isNum = val !== "" && !isNaN(val);
+            return `  ${isNum ? "num" : "String"} ${v.name} = ${isNum ? val : "'" + val.replace(/'/g, "\\'") + "'"};`;
+          })
+          .join("\n");
+        const prompt = buildPromptWithInterp(
+          rawPrompt,
+          vars,
+          (n) => `\${${n}}`,
+        );
+        const sysBlock = systemPrompt
+          ? `\n      'systemInstruction': {'parts': [{'text': ${JSON.stringify(systemPrompt)}}]},`
+          : "";
+        return `import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+const apiKey = 'YOUR_GEMINI_API_KEY';
+const model  = '${model}';
+
+void main() async {
+  // — Variables —
+${varDecls}
+
+  final prompt = """${prompt}""";
+
+  final url = Uri.parse(
+    'https://generativelanguage.googleapis.com/v1beta/models/\$model:generateContent?key=\$apiKey');
+  final res = await http.post(url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],${sysBlock}
+      'generationConfig': {}
+    }));
+
+  if (res.statusCode != 200) throw Exception('HTTP \${res.statusCode}: \${res.body}');
+  final data  = jsonDecode(res.body);
+  final parts = data['candidates'][0]['content']['parts'] as List;
+  final text  = parts.map((p) => p['text'] ?? '').join('');
+  print(text);
+}`;
+      }
+
+      // ── Kotlin with variables ─────────────────────────────────────────────────────
+      function genVarsKotlin(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            const isNum = val !== "" && !isNaN(val);
+            return `    val ${v.name} = ${isNum ? val : JSON.stringify(val)}`;
+          })
+          .join("\n");
+        const prompt = buildPromptWithInterp(
+          rawPrompt,
+          vars,
+          (n) => `\${${n}}`,
+        );
+        const sysBlock = systemPrompt
+          ? `\n            "systemInstruction" to mapOf("parts" to listOf(mapOf("text" to ${JSON.stringify(systemPrompt)}))),`
+          : "";
+        return `import okhttp3.*
+import com.google.gson.Gson
+
+const val API_KEY = "YOUR_GEMINI_API_KEY"
+const val MODEL   = "${model}"
+
+fun main() {
+    // — Variables —
+${varDecls}
+
+    val prompt = """${prompt}"""
+
+    val gson    = Gson()
+    val client  = OkHttpClient()
+    val payload = mapOf(
+        "contents" to listOf(mapOf("role" to "user", "parts" to listOf(mapOf("text" to prompt)))),${sysBlock}
+        "generationConfig" to emptyMap<String, Any>()
+    )
+    val body = RequestBody.create(MediaType.parse("application/json"), gson.toJson(payload))
+    val req  = Request.Builder()
+        .url("https://generativelanguage.googleapis.com/v1beta/models/\$MODEL:generateContent?key=\$API_KEY")
+        .post(body).build()
+
+    val res = client.newCall(req).execute()
+    check(res.isSuccessful) { "HTTP \${res.code()}: \${res.body()?.string()}" }
+
+    @Suppress("UNCHECKED_CAST")
+    val data       = gson.fromJson(res.body()!!.string(), Map::class.java)
+    val candidates = data["candidates"] as List<Map<*, *>>
+    val content    = candidates[0]["content"] as Map<*, *>
+    val parts      = content["parts"] as List<Map<*, *>>
+    val text       = parts.joinToString("") { it["text"] as? String ?: "" }
+    println(text)
+}`;
+      }
+
+      // ── Swift with variables ──────────────────────────────────────────────────────
+      function genVarsSwift(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            const isNum = val !== "" && !isNaN(val);
+            return `let ${v.name} = ${isNum ? val : JSON.stringify(val)}`;
+          })
+          .join("\n");
+        const prompt = buildPromptWithInterp(
+          rawPrompt,
+          vars,
+          (n) => `\\(${n})`,
+        );
+        const sysBlock = systemPrompt
+          ? `\n    "systemInstruction": ["parts": [["text": ${JSON.stringify(systemPrompt)}]]],`
+          : "";
+        return `import Foundation
+
+let apiKey = "YOUR_GEMINI_API_KEY"
+let model  = "${model}"
+
+// — Variables —
+${varDecls}
+
+let prompt = """
+${prompt}
+"""
+
+var request = URLRequest(url: URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\\(model):generateContent?key=\\(apiKey)")!)
+request.httpMethod = "POST"
+request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+let payload: [String: Any] = [
+    "contents": [["role": "user", "parts": [["text": prompt]]]],${sysBlock}
+    "generationConfig": [:]
+]
+request.httpBody = try! JSONSerialization.data(withJSONObject: payload)
+
+let task = URLSession.shared.dataTask(with: request) { data, _, error in
+    guard let data = data, error == nil else { print("Error: \\(error!)"); return }
+    let json       = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
+    let candidates = json["candidates"] as! [[String: Any]]
+    let content    = candidates[0]["content"] as! [String: Any]
+    let parts      = content["parts"] as! [[String: Any]]
+    let text       = parts.compactMap { $0["text"] as? String }.joined()
+    print(text)
+}
+task.resume()
+RunLoop.main.run(until: Date(timeIntervalSinceNow: 30))`;
+      }
+
+      // ── Go with variables ─────────────────────────────────────────────────────────
+      function genVarsGo(rawPrompt, vars, systemPrompt, model) {
+        const varDecls = vars
+          .map((v) => {
+            const val = v.defaultValue;
+            const isNum = val !== "" && !isNaN(val);
+            return `\t${v.name} := ${isNum ? val : JSON.stringify(val)}`;
+          })
+          .join("\n");
+        // Go uses fmt.Sprintf — replace each {{var}} with %v and collect args
+        let fmtStr = rawPrompt;
+        const sprintfArgs = [];
+        vars.forEach((v) => {
+          const re = new RegExp(
+            "\\{\\{" + v.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\}\\}",
+            "g",
+          );
+          fmtStr = fmtStr.replace(re, "%v");
+          sprintfArgs.push(v.name);
+        });
+        const promptLine = sprintfArgs.length
+          ? `fmt.Sprintf(${JSON.stringify(fmtStr)}, ${sprintfArgs.join(", ")})`
+          : JSON.stringify(fmtStr);
+        const sysBlock = systemPrompt
+          ? `\n\t\t"systemInstruction": map[string]interface{}{"parts": []map[string]interface{}{{"text": ${JSON.stringify(systemPrompt)}}}},`
+          : "";
+        return `package main
+
+import (
+\t"bytes"
+\t"encoding/json"
+\t"fmt"
+\t"io"
+\t"net/http"
+)
+
+const apiKey = "YOUR_GEMINI_API_KEY"
+const model  = "${model}"
+
+func main() {
+\t// — Variables —
+${varDecls}
+
+\tprompt := ${promptLine}
+
+\tpayload := map[string]interface{}{
+\t\t"contents": []map[string]interface{}{
+\t\t\t{"role": "user", "parts": []map[string]interface{}{{"text": prompt}}},
+\t\t},${sysBlock}
+\t\t"generationConfig": map[string]interface{}{},
+\t}
+\tbody, _ := json.Marshal(payload)
+\turl := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, apiKey)
+\tres, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+\tif err != nil { panic(err) }
+\tdefer res.Body.Close()
+
+\traw, _ := io.ReadAll(res.Body)
+\tvar data map[string]interface{}
+\tjson.Unmarshal(raw, &data)
+\tcandidates := data["candidates"].([]interface{})
+\tcontent    := candidates[0].(map[string]interface{})["content"].(map[string]interface{})
+\tparts      := content["parts"].([]interface{})
+\ttext := ""
+\tfor _, p := range parts {
+\t\tif t, ok := p.(map[string]interface{})["text"].(string); ok { text += t }
+\t}
+\tfmt.Println(text)
+}`;
+      }
+
+      function closeCodeModal(e) {
+        if (e && e.target !== document.getElementById("code-modal-overlay"))
+          return;
+        document.getElementById("code-modal-overlay").classList.remove("open");
+      }
+
+      function copyCode() {
+        navigator.clipboard.writeText(generatedCode).then(() => {
+          toast("Code copied!");
+          closeCodeModal();
+        });
+      }
+
+      function syntaxHighlightCode(code) {
+        return (
+          escapeHtml(code)
+            // strings (double-quoted)
+            .replace(
+              /"(?:[^"\\]|\\.)*"/g,
+              (m) => `<span class="code-str">${m}</span>`,
+            )
+            // template literals
+            .replace(
+              /`(?:[^`\\]|\\.)*`/g,
+              (m) => `<span class="code-str">${m}</span>`,
+            )
+            // keywords
+            .replace(
+              /\b(const|let|var|async|await|function|return|if|throw|new)\b/g,
+              (m) => `<span class="code-kw">${m}</span>`,
+            )
+            // comments
+            .replace(
+              /(\/\/[^\n]*)/g,
+              (m) => `<span class="code-cmt">${m}</span>`,
+            )
+        );
+      }
+
+      function downloadFile() {
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "gemini-prompt-lab.html";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // JSON SCHEMA MODE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function onJsonModeToggle() {
+        const checked = document.getElementById("json-mode-checkbox").checked;
+        document
+          .getElementById("json-toggle-label")
+          .classList.toggle("active", checked);
+
+        if (!checked) {
+          // Uncheck — hide panel but preserve schema silently
+          state.jsonMode = false;
+          document.getElementById("json-schema-body").classList.remove("open");
+          save();
+          return;
+        }
+
+        // Checked — validate prompt first
+        const rawPrompt = document.getElementById("prompt-editor").value.trim();
+        if (!rawPrompt) {
+          document.getElementById("json-mode-checkbox").checked = false;
+          document
+            .getElementById("json-toggle-label")
+            .classList.remove("active");
+          toast("Write a prompt first, then we can suggest a schema for it.");
+          return;
+        }
+
+        state.jsonMode = true;
+        document.getElementById("json-schema-body").classList.add("open");
+
+        // If we already have a schema for this prompt, just show it
+        if (state.schemaText) {
+          document.getElementById("schema-editor").value = state.schemaText;
+          checkSchemaStaleness();
+          save();
+          return;
+        }
+
+        // First time — show explain modal (unless suppressed)
+        const suppress =
+          localStorage.getItem("promptlab_suppress_json_explain") === "1";
+        if (suppress) {
+          generateSchema();
+        } else {
+          document.getElementById("json-explain-overlay").classList.add("open");
+        }
+      }
+
+      function closeExplainModal(proceed) {
+        const dontShow = document.getElementById("dont-show-explain").checked;
+        if (dontShow)
+          localStorage.setItem("promptlab_suppress_json_explain", "1");
+        document
+          .getElementById("json-explain-overlay")
+          .classList.remove("open");
+        if (!proceed) {
+          // User cancelled — uncheck
+          document.getElementById("json-mode-checkbox").checked = false;
+          document
+            .getElementById("json-toggle-label")
+            .classList.remove("active");
+          document.getElementById("json-schema-body").classList.remove("open");
+          state.jsonMode = false;
+          return;
+        }
+        generateSchema();
+      }
+
+      async function generateSchema() {
+        const rawPrompt = document.getElementById("prompt-editor").value.trim();
+        if (!rawPrompt) {
+          toast("Prompt is empty");
+          return;
+        }
+
+        const injected = injectVariables(rawPrompt);
+
+        // Confidence check — vague prompt warning
+        const wordCount = injected.trim().split(/\s+/).length;
+        const isVague = wordCount < 5;
+
+        setSchemaStatus("generating", "Generating schema…");
+        document
+          .getElementById("schema-stale-banner")
+          .classList.remove("visible");
+        document.getElementById("schema-editor").classList.remove("invalid");
+        document.getElementById("schema-editor").value = "";
+        document.getElementById("schema-editor").placeholder = "Generating…";
+
+        try {
+          const schemaPrompt = `You are a JSON schema designer. Given this prompt, suggest a minimal JSON schema (as a plain JSON example object with realistic field names and string/number/boolean values — NOT JSON Schema spec format).
+Return ONLY the raw JSON object, no explanation, no markdown, no backticks.
+Keep it flat or max 2 levels deep. Use realistic example values.
+
+Prompt: "${injected}"`;
+
+          const model = document.getElementById("model-select").value;
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${document.getElementById("api-key-input").value.trim()}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: schemaPrompt }] }],
+                generationConfig: { temperature: 0.1 },
+              }),
+            },
+          );
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          let text = (data?.candidates?.[0]?.content?.parts || [])
+            .map((p) => p.text || "")
+            .join("")
+            .trim();
+
+          // Strip markdown fences if model includes them
+          text = text
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/```\s*$/, "")
+            .trim();
+
+          // Validate JSON
+          JSON.parse(text); // throws if invalid
+          const pretty = JSON.stringify(JSON.parse(text), null, 2);
+
+          document.getElementById("schema-editor").value = pretty;
+          document.getElementById("schema-editor").placeholder = "";
+          state.schemaText = pretty;
+          state.schemaConfirmedForPrompt = rawPrompt;
+
+          const msg = isVague
+            ? "⚠ Prompt is vague — schema may be generic. Edit as needed."
+            : "✓ Schema ready — hit Run when you're ready";
+          setSchemaStatus(isVague ? "stale" : "ready", msg);
+          save();
+        } catch (err) {
+          setSchemaStatus(
+            "invalid",
+            "✕ Failed to generate schema — check your API key",
+          );
+          document.getElementById("schema-editor").placeholder =
+            "Paste your JSON schema here manually…";
+        }
+      }
+
+      function onSchemaEditorInput() {
+        const text = document.getElementById("schema-editor").value.trim();
+        state.schemaText = text;
+        document.getElementById("schema-editor").classList.remove("invalid");
+
+        if (!text) {
+          setSchemaStatus("", "");
+          save();
+          return;
+        }
+
+        try {
+          JSON.parse(text);
+          setSchemaStatus("ready", "✓ Valid JSON schema");
+        } catch (e) {
+          setSchemaStatus("invalid", "✕ Invalid JSON — fix before running");
+        }
+        save();
+      }
+
+      function checkSchemaStaleness() {
+        if (!state.schemaText) return;
+        const currentPrompt = document
+          .getElementById("prompt-editor")
+          .value.trim();
+        const isStale =
+          state.schemaConfirmedForPrompt &&
+          currentPrompt !== state.schemaConfirmedForPrompt;
+        document
+          .getElementById("schema-stale-banner")
+          .classList.toggle("visible", isStale);
+        if (isStale) {
+          setSchemaStatus(
+            "stale",
+            "⚠ Schema may be stale — prompt has changed",
+          );
+        } else if (state.schemaText) {
+          try {
+            JSON.parse(state.schemaText);
+            setSchemaStatus("ready", "✓ Schema ready");
+          } catch (e) {}
+        }
+      }
+
+      function setSchemaStatus(cls, msg) {
+        const el = document.getElementById("schema-status");
+        el.className = "schema-status" + (cls ? " " + cls : "");
+        el.textContent = msg;
+      }
+
+      function validateSchemaForRun() {
+        if (!state.jsonMode) return true;
+        const text = document.getElementById("schema-editor").value.trim();
+        if (!text) {
+          toast("Schema is empty — add a JSON schema or uncheck JSON mode");
+          return false;
+        }
+        try {
+          JSON.parse(text);
+          return true;
+        } catch (e) {
+          document.getElementById("schema-editor").classList.add("invalid");
+          setSchemaStatus("invalid", "✕ Invalid JSON — fix before running");
+          toast("Schema has a JSON error — fix it before running");
+          return false;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // COPY PROMPT
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function copyPrompt() {
+        const text = document.getElementById("prompt-editor").value;
+        if (!text.trim()) {
+          toast("Prompt is empty");
+          return;
+        }
+        navigator.clipboard.writeText(text).then(() => toast("Prompt copied!"));
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // JSON TREE RENDERER
+      // Depth 0,1 = expanded by default. Depth 2+ = collapsed by default.
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function renderJsonTree(value, container, isLast, isRoot, depth) {
+        depth = depth || 0;
+
+        if (Array.isArray(value)) {
+          renderCollection(value, container, isLast, isRoot, depth, true);
+        } else if (value !== null && typeof value === "object") {
+          renderCollection(value, container, isLast, isRoot, depth, false);
+        } else {
+          const span = document.createElement("span");
+          span.innerHTML =
+            formatPrimitive(value) +
+            (isLast ? "" : '<span class="jt-comma">,</span>');
+          container.appendChild(span);
+        }
+      }
+
+      function renderCollection(
+        value,
+        container,
+        isLast,
+        isRoot,
+        depth,
+        isArray,
+      ) {
+        const keys = isArray ? value.map((_, i) => i) : Object.keys(value);
+        const count = keys.length;
+        const openBracket = isArray ? "[" : "{";
+        const closeBracket = isArray ? "]" : "}";
+        const summaryText = isArray
+          ? `${count} item${count !== 1 ? "s" : ""}`
+          : `${count} key${count !== 1 ? "s" : ""}`;
+
+        // Expand depth 0 and 1 by default, collapse deeper
+        const startOpen = depth < 2;
+
+        const node = document.createElement("div");
+        node.className = "jt-node";
+
+        // Toggle row
+        const toggleRow = document.createElement("div");
+        toggleRow.className = "jt-toggle";
+
+        const arrow = document.createElement("span");
+        arrow.className = "jt-arrow" + (startOpen ? " open" : "");
+        arrow.textContent = "▶";
+
+        const bracketOpen = document.createElement("span");
+        bracketOpen.className = "jt-bracket";
+        bracketOpen.textContent = openBracket;
+
+        const summary = document.createElement("span");
+        summary.className = "jt-summary";
+        summary.textContent = ` ${summaryText} `;
+        summary.style.display = startOpen ? "none" : "inline";
+
+        toggleRow.appendChild(arrow);
+        toggleRow.appendChild(bracketOpen);
+        toggleRow.appendChild(summary);
+
+        // Children container
+        const children = document.createElement("div");
+        children.className = "jt-children" + (startOpen ? "" : " hidden");
+
+        keys.forEach((key, idx) => {
+          const childVal = isArray ? value[key] : value[key];
+          const isChildLast = idx === keys.length - 1;
+          const childRow = document.createElement("div");
+          childRow.className = "jt-node";
+
+          if (!isArray) {
+            // Key: value
+            const keySpan = document.createElement("span");
+            keySpan.className = "jt-key";
+            keySpan.textContent = `"${key}"`;
+            childRow.appendChild(keySpan);
+
+            const colon = document.createElement("span");
+            colon.textContent = ": ";
+            childRow.appendChild(colon);
+          }
+
+          const isNested = childVal !== null && typeof childVal === "object";
+          if (isNested) {
+            renderJsonTree(childVal, childRow, isChildLast, false, depth + 1);
+          } else {
+            const valSpan = document.createElement("span");
+            valSpan.innerHTML =
+              formatPrimitive(childVal) +
+              (isChildLast ? "" : '<span class="jt-comma">,</span>');
+            childRow.appendChild(valSpan);
+          }
+          children.appendChild(childRow);
+        });
+
+        // Close bracket
+        const closeRow = document.createElement("div");
+        const bracketClose = document.createElement("span");
+        bracketClose.className = "jt-bracket";
+        bracketClose.textContent = closeBracket + (isLast ? "" : ",");
+        closeRow.appendChild(bracketClose);
+
+        // Click to toggle
+        toggleRow.addEventListener("click", () => {
+          const isOpen = arrow.classList.contains("open");
+          arrow.classList.toggle("open", !isOpen);
+          children.classList.toggle("hidden", isOpen);
+          summary.style.display = isOpen ? "inline" : "none";
+        });
+
+        node.appendChild(toggleRow);
+        node.appendChild(children);
+        node.appendChild(closeRow);
+        container.appendChild(node);
+      }
+
+      function formatPrimitive(value) {
+        if (value === null) return '<span class="jt-null">null</span>';
+        if (typeof value === "boolean")
+          return `<span class="jt-bool">${value}</span>`;
+        if (typeof value === "number")
+          return `<span class="jt-num">${value}</span>`;
+        // String — escape HTML
+        const escaped = String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return `<span class="jt-str">"${escaped}"</span>`;
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // COMPARE MODE
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      let compareMode = false;
+      let compareState = {
+        a: {
+          running: false,
+          cancelled: false,
+          timer: null,
+          seconds: 0,
+          output: null,
+        },
+        b: {
+          running: false,
+          cancelled: false,
+          timer: null,
+          seconds: 0,
+          output: null,
+        },
+      };
+
+      function toggleCompare() {
+        compareMode = !compareMode;
+        const btn = document.getElementById("compare-toggle-btn");
+        btn.classList.toggle("active", compareMode);
+        btn.textContent = compareMode ? "⊞ Compare ✓" : "⊞ Compare";
+
+        document.getElementById("app").classList.toggle("compare", compareMode);
+        document
+          .getElementById("compare-bar")
+          .classList.toggle("visible", compareMode);
+        document
+          .getElementById("compare-panes")
+          .classList.toggle("visible", compareMode);
+
+        // Hide/show single output panel elements
+        document.getElementById("single-output-toolbar").style.display =
+          compareMode ? "none" : "";
+        document.getElementById("output-body").style.display = compareMode
+          ? "none"
+          : "";
+        document.getElementById("cancel-warning").style.display = compareMode
+          ? "none"
+          : "";
+        document.getElementById("grounding-section").style.display = compareMode
+          ? "none"
+          : "";
+        document.getElementById("save-panel").style.display = compareMode
+          ? "none"
+          : "";
+
+        // Also hide/show the run-btn ⌘↵ hint — compare has its own run
+        document.getElementById("run-btn").style.display = compareMode
+          ? "none"
+          : "";
+        document.getElementById("cancel-btn").style.display = "none";
+      }
+
+      async function runBoth() {
+        const apiKey = document.getElementById("api-key-input").value.trim();
+        if (!apiKey) {
+          toast("Enter your Gemini API key first");
+          return;
+        }
+
+        const rawPrompt = document.getElementById("prompt-editor").value.trim();
+        if (!rawPrompt) {
+          toast("Prompt is empty");
+          return;
+        }
+
+        const prompt = injectVariables(rawPrompt);
+
+        const unresolved = [...prompt.matchAll(/\{\{([^}]+)\}\}/g)].map(
+          (m) => m[1],
+        );
+        if (unresolved.length) {
+          toast(
+            `Undefined variables: ${[...new Set(unresolved)].map((n) => `{{${n}}}`).join(", ")}`,
+          );
+          return;
+        }
+
+        const emptyVars = state.variables.filter(
+          (v) => v.name && !v.defaultValue.trim(),
+        );
+        if (emptyVars.length) {
+          toast(
+            `Empty variables: ${emptyVars.map((v) => `{{${v.name}}}`).join(", ")}`,
+          );
+          return;
+        }
+
+        if (!validateSchemaForRun()) return;
+
+        const systemPrompt = document
+          .getElementById("system-prompt-editor")
+          .value.trim();
+        const modelA = document.getElementById("compare-model-a").value;
+        const modelB = document.getElementById("compare-model-b").value;
+
+        document.getElementById("run-both-btn").disabled = true;
+        document.getElementById("cancel-both-btn").style.display =
+          "inline-flex";
+
+        compareState.a = {
+          running: true,
+          cancelled: false,
+          timer: null,
+          seconds: 0,
+          output: null,
+        };
+        compareState.b = {
+          running: true,
+          cancelled: false,
+          timer: null,
+          seconds: 0,
+          output: null,
+        };
+
+        setPaneStatus("a", "running", "running");
+        setPaneStatus("b", "running", "running");
+        clearPane("a");
+        clearPane("b");
+        startPaneTimer("a");
+        startPaneTimer("b");
+
+        await Promise.allSettled([
+          runOnPane("a", prompt, systemPrompt, modelA, apiKey),
+          runOnPane("b", prompt, systemPrompt, modelB, apiKey),
+        ]);
+
+        document.getElementById("run-both-btn").disabled = false;
+        document.getElementById("cancel-both-btn").style.display = "none";
+      }
+
+      async function runOnPane(side, prompt, systemPrompt, model, apiKey) {
+        const cs = compareState[side];
+        try {
+          let finalPrompt = prompt;
+          const generationConfig = {};
+          if (state.jsonMode && state.schemaText) {
+            const schemaObj = JSON.parse(state.schemaText);
+            finalPrompt += `\n\nRespond ONLY with a valid JSON object or array matching this exact schema structure:\n${JSON.stringify(schemaObj)}\nDo not include any explanation, markdown, or code fences. Return raw JSON only.`;
+            generationConfig.response_mime_type = "application/json";
+          }
+
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const body = {
+            contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+            generationConfig,
+          };
+          if (systemPrompt)
+            body.systemInstruction = { parts: [{ text: systemPrompt }] };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+
+          if (cs.cancelled) return;
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData?.error?.message || `HTTP ${res.status}`);
+          }
+
+          const data = await res.json();
+          if (cs.cancelled) return;
+
+          let text = "";
+          const parts = data?.candidates?.[0]?.content?.parts || [];
+          for (const part of parts) {
+            if (part.text) text += part.text;
+          }
+          if (!text) throw new Error("Empty response from model");
+
+          cs.output = text;
+          cs.running = false;
+          stopPaneTimer(side);
+          setPaneStatus(side, "done", `done · ${cs.seconds}s`);
+          displayPaneOutput(side, text);
+
+          // Grounding — show inline label if present
+          const chunks =
+            data?.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+          if (chunks.length) showPaneGrounding(side, chunks);
+
+          document.getElementById(`compare-copy-${side}`).style.display =
+            "inline-flex";
+          document.getElementById(`compare-save-${side}`).style.display =
+            "inline-flex";
+        } catch (err) {
+          if (cs.cancelled) return;
+          cs.running = false;
+          stopPaneTimer(side);
+          setPaneStatus(side, "error", "error");
+          const errEl = document.getElementById(`compare-error-${side}`);
+          errEl.textContent =
+            "⚠ " +
+            (err.message === "Failed to fetch"
+              ? "Failed to fetch — open this file directly in your browser, not inside an iframe."
+              : err.message || "Unknown error");
+          errEl.style.display = "block";
+          document.getElementById(`compare-ph-${side}`).style.display = "none";
+        }
+      }
+
+      function cancelBoth() {
+        compareState.a.cancelled = true;
+        compareState.b.cancelled = true;
+        stopPaneTimer("a");
+        stopPaneTimer("b");
+        if (compareState.a.running) {
+          compareState.a.running = false;
+          setPaneStatus("a", "aborted", "aborted");
+        }
+        if (compareState.b.running) {
+          compareState.b.running = false;
+          setPaneStatus("b", "aborted", "aborted");
+        }
+        document.getElementById("run-both-btn").disabled = false;
+        document.getElementById("cancel-both-btn").style.display = "none";
+      }
+
+      function setPaneStatus(side, cls, text) {
+        const el = document.getElementById(`compare-status-${side}`);
+        el.className = `compare-status ${cls}`;
+        el.textContent = text;
+      }
+
+      function clearPane(side) {
+        document.getElementById(`compare-ph-${side}`).style.display = "flex";
+        document.getElementById(`compare-ph-${side}`).innerHTML =
+          '<div style="font-size:22px;opacity:0.25;">◈</div><div>Running…</div>';
+        const txt = document.getElementById(`compare-text-${side}`);
+        txt.innerHTML = "";
+        txt.style.display = "none";
+        const err = document.getElementById(`compare-error-${side}`);
+        err.textContent = "";
+        err.style.display = "none";
+        document.getElementById(`compare-copy-${side}`).style.display = "none";
+        document.getElementById(`compare-save-${side}`).style.display = "none";
+        document.getElementById(`compare-elapsed-${side}`).textContent = "";
+      }
+
+      function displayPaneOutput(side, text) {
+        const ph = document.getElementById(`compare-ph-${side}`);
+        const txt = document.getElementById(`compare-text-${side}`);
+        ph.style.display = "none";
+        const trimmed = text.trim();
+        let isJson = false;
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            txt.innerHTML = "";
+            const tree = document.createElement("div");
+            tree.className = "json-tree";
+            renderJsonTree(parsed, tree, true, true);
+            txt.appendChild(tree);
+            isJson = true;
+          } catch (e) {}
+        }
+        if (!isJson) txt.textContent = text;
+        txt.style.display = "block";
+      }
+
+      function showPaneGrounding(side, chunks) {
+        const body = document.getElementById(
+          `compare-text-${side}`,
+        ).parentElement;
+        const existing = body.querySelector(".compare-grounding");
+        if (existing) existing.remove();
+        const div = document.createElement("div");
+        div.className = "compare-grounding";
+        div.style.cssText =
+          "margin-top:10px;padding-top:8px;border-top:1px solid var(--border);";
+        div.innerHTML =
+          '<div style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Sources</div>';
+        const chipsDiv = document.createElement("div");
+        chipsDiv.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;";
+        chunks.slice(0, 6).forEach((chunk) => {
+          const uri = chunk?.web?.uri || chunk?.retrievedContext?.uri;
+          const title = chunk?.web?.title || uri;
+          if (!uri) return;
+          const a = document.createElement("a");
+          a.className = "chip";
+          a.href = uri;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.innerHTML = `<div class="chip-dot"></div>${escapeHtml(title || uri)}`;
+          chipsDiv.appendChild(a);
+        });
+        div.appendChild(chipsDiv);
+        body.appendChild(div);
+      }
+
+      function startPaneTimer(side) {
+        const cs = compareState[side];
+        cs.seconds = 0;
+        const el = document.getElementById(`compare-elapsed-${side}`);
+        el.textContent = "0s";
+        cs.timer = setInterval(() => {
+          cs.seconds++;
+          const m = Math.floor(cs.seconds / 60),
+            s = cs.seconds % 60;
+          el.textContent = m > 0 ? `${m}m ${s}s` : `${cs.seconds}s`;
+        }, 1000);
+      }
+
+      function stopPaneTimer(side) {
+        const cs = compareState[side];
+        if (cs.timer) {
+          clearInterval(cs.timer);
+          cs.timer = null;
+        }
+      }
+
+      function compareCopy(side) {
+        const text = compareState[side].output;
+        if (!text) return;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => toast(`Side ${side.toUpperCase()} copied!`));
+      }
+
+      function compareSave(side) {
+        const text = compareState[side].output;
+        if (!text) return;
+        const model = document.getElementById(`compare-model-${side}`).value;
+        // Reuse version save — pre-fill name with model identifier
+        state.lastOutput = text;
+        state.lastTokenCount = null;
+        const nameInput = document.getElementById("save-name");
+        nameInput.value = `${model} (${side.toUpperCase()})`;
+        // Show single-mode save panel briefly
+        compareMode = false;
+        toggleCompare(); // flip back to single to show save panel
+        toggleCompare(); // flip back to compare
+        // Direct save approach — just call saveVersion machinery
+        const id = "v_" + Date.now();
+        const name = `${model.replace("gemini-", "").slice(0, 12)} ${side.toUpperCase()} — compare`;
+        state.versions.push({
+          id,
+          name,
+          prompt: document.getElementById("prompt-editor").value,
+          systemPrompt: document.getElementById("system-prompt-editor").value,
+          variables: JSON.parse(JSON.stringify(state.variables)),
+          annotation: `Compare run — Model ${side.toUpperCase()}: ${model}`,
+          flag: "pass",
+          timestamp: Date.now(),
+          tokenCount: null,
+          jsonMode: state.jsonMode,
+          schemaText: state.schemaText,
+          compareModel: model,
+          compareSide: side,
+        });
+        renderVersions();
+        save();
+        toast(`Saved as "${name}"`);
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // DOCS
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      function openDocs() {
+        document.getElementById("docs-overlay").classList.add("open");
+      }
+      function closeDocs() {
+        document.getElementById("docs-overlay").classList.remove("open");
+      }
+      function onDocsOverlayClick(e) {
+        if (e.target === document.getElementById("docs-overlay")) closeDocs();
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────────
+      // TOAST
+      // ─────────────────────────────────────────────────────────────────────────────
+
+      let toastTimer;
+      function toast(msg) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+      }
+    </script>
+  </body>
+</html>
